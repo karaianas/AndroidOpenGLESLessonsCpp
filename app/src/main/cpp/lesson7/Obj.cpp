@@ -14,7 +14,8 @@ int Obj::BYTES_PER_SHORT = 2;
 int Obj::POSITION_STEP = 3;
 int Obj::NORMAL_STEP = 3;
 //int Obj::TEXCOORD_STEP = 2;
-int Obj::TRANS_STEP = 3;
+int Obj::COEFF_STEP = 4;
+// Need to put order here
 
 
 void Obj::test()
@@ -91,7 +92,7 @@ void Obj::test()
 
 }
 
-vector<float> processLine(string line)
+vector<float> processLine(string line, int size)
 {
     vector<float> result;
     if((line[0] <= 57 && line[0] >= 48) || (line[0] == 45))
@@ -105,6 +106,8 @@ vector<float> processLine(string line)
                 i++;
             }
             result.push_back(stof(number));
+            if(result.size() == size)
+                return result;
             //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%f", result.back());
         }
     }
@@ -113,7 +116,7 @@ vector<float> processLine(string line)
     return result;
 }
 
-vector<short> processLine2(string line)
+vector<short> processLine2(string line, int size)
 {
     vector<short> result;
     if((line[0] <= 57 && line[0] >= 48) || (line[0] == 45))
@@ -127,6 +130,8 @@ vector<short> processLine2(string line)
                 i++;
             }
             result.push_back(short(stoi(number)));
+            if(result.size() == size)
+                return result;
             //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%f", result.back());
         }
     }
@@ -138,7 +143,10 @@ vector<short> processLine2(string line)
 
 void Obj::parser()
 {
-    const char *buffer = GLUtils::openTextFile("models/planeNsphere.model");
+    string path = "/planeNsphere.";
+    string modelPath = "models" + path + "model";
+    string coeffPath = "coefficients" + path + "coeff";
+    const char *buffer = GLUtils::openTextFile(modelPath.c_str());
     //const char *buffer = GLUtils::openTextFile("models/maxPlanck.model");
 
     int lineCount = 0;
@@ -154,7 +162,7 @@ void Obj::parser()
             i++;
         }
         lineCount++;
-        vector<float> numbers = processLine(s);
+        vector<float> numbers = processLine(s, 6);
         if(numbers.size() == 6)
         {
             positions.push_back(numbers[0]);
@@ -168,7 +176,7 @@ void Obj::parser()
         }
         else
         {
-            vector<short> sth = processLine2(s);
+            vector<short> sth = processLine2(s, 4);
             if(sth.size() == 4)
             {
                 indices.push_back(sth[1]);
@@ -182,6 +190,30 @@ void Obj::parser()
         //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%s", s.c_str());
     }
 
+    int order = 2;
+    int numCoeff = order * order;
+
+    const char *buffer2 = GLUtils::openTextFile(coeffPath.c_str());
+    lineCount = 0;
+    for(int i = 0; lineCount < positions.size() / 3; i++)
+    {
+        string s;
+        while (buffer2[i] != '\n')
+        {
+            if(buffer2[i] == '\0')
+                break;
+            s.push_back(buffer2[i]);
+            i++;
+        }
+        lineCount++;
+        vector<float> numbers = processLine(s, numCoeff);
+        if(numbers.size() == numCoeff)
+        {
+            for(int j = 0; j < numCoeff; j++)
+                coeffs.push_back(numbers[j]);
+        }
+        //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", numbers.size());
+    }
     //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", fcounter);
 //        char c = buffer[i];
 //        string s = to_string(c);
@@ -195,8 +227,8 @@ void Obj::parser()
 void Obj::initialize()
 {
     // (1) Generate buffers
-    GLuint buffers[3];
-    glGenBuffers(3, buffers);
+    GLuint buffers[4];
+    glGenBuffers(4, buffers);
 
     // (2) Bind buffers
     // Bind to the buffer. Future commands will affect this buffer specifically.
@@ -210,12 +242,16 @@ void Obj::initialize()
     glBufferData(GL_ARRAY_BUFFER, normals.size() * BYTES_PER_FLOAT, normals.data(),
                  GL_STATIC_DRAW);
 
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
+    glBufferData(GL_ARRAY_BUFFER, coeffs.size() * BYTES_PER_FLOAT, coeffs.data(),
+                 GL_STATIC_DRAW);
+
 //    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
 //    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * BYTES_PER_FLOAT,
 //                 texCoords.data(),
 //                 GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[2]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[3]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()
                                           * BYTES_PER_SHORT,
                  indices.data(), GL_STATIC_DRAW);
@@ -226,8 +262,9 @@ void Obj::initialize()
 
     mPositionsBufferIdx = buffers[0];
     mNormalsBufferIdx = buffers[1];
+    mCoeffsBufferIdx = buffers[2];
     //mTexCoordsBufferIdx = buffers[2];
-    mIndexBufferIdx = buffers[2];
+    mIndexBufferIdx = buffers[3];
 }
 
 void Obj::renderer()
@@ -241,6 +278,11 @@ void Obj::renderer()
     glBindBuffer(GL_ARRAY_BUFFER, mNormalsBufferIdx);
     glEnableVertexAttribArray(mNormalHandle);
     glVertexAttribPointer(mNormalHandle, NORMAL_STEP, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Pass in the coefficient information
+    glBindBuffer(GL_ARRAY_BUFFER, mCoeffsBufferIdx);
+    glEnableVertexAttribArray(mCoeffHandle);
+    glVertexAttribPointer(mCoeffHandle, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Pass in the texture information
 //    glBindBuffer(GL_ARRAY_BUFFER, mTexCoordsBufferIdx);

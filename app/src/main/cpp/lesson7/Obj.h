@@ -24,6 +24,7 @@ public:
     // These should eventually be private variables
     GLuint mPositionHandle = 0;
     GLuint mNormalHandle = 0;
+    GLuint mCoeffHandle = 0;
     //GLuint mTextureCoordHandle = 0;
 
 private:
@@ -32,12 +33,13 @@ private:
     GLuint mTexCoordsBufferIdx;
 
     GLuint mIndexBufferIdx;
+    GLuint mCoeffsBufferIdx;
 
     vector<float> positions;
     vector<float> normals;
     vector<short> indices;
     //vector<float> texCoords;
-    vector<float> transfers;
+    vector<float> coeffs;
 
 public:
     void test();
@@ -50,7 +52,7 @@ public:
     static int  POSITION_STEP;
     static int  NORMAL_STEP;
     //static int  TEXCOORD_STEP;
-    static int  TRANS_STEP;
+    static int  COEFF_STEP;
 };
 
 

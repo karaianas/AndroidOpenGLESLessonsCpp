@@ -194,8 +194,10 @@ void Native7Lesson::draw()
         genData->getCubes()->setTextureCoordinateHandle(textureCoordinateHandle);
     }
     // ++++++++++++++++++++++++
+    GLuint coeffHandle = (GLuint) glGetAttribLocation(mProgramHandle, "a_Coeff");
     obj->mPositionHandle = positionHandle;
     obj->mNormalHandle = normalHandle;
+    obj->mCoeffHandle = coeffHandle;
     //obj->mTextureCoordHandle = textureCoordinateHandle;
     // ++++++++++++++++++++++++
 
