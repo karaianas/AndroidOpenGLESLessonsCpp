@@ -88,13 +88,15 @@ void Native7Lesson::create() {
     // Position the eye in front of the origin.
     float eyeX = 0.0f;
     float eyeY = 0.0f;
+    //float eyeY = 0.2f;
     float eyeZ = -0.5f;
-    //float eyeZ = -300.0f;
+    //float eyeZ = 5.0f;
 
     // We are looking at the origin
     float centerX = 0.0f;
     float centerY = 0.0f;
     float centerZ = -5.0f;
+    //float centerZ = 0.0f;
 
     // Set our up vector.
     float upX = 0.0f;
@@ -164,11 +166,8 @@ void Native7Lesson::change(int width, int height) {
     mProjectionMatrix = Matrix::newFrustum(left, right, bottom, top, near, far);
 }
 
-void Native7Lesson::draw() {
-
-    // ++++++++++++++++++++++++
-    //test();
-    // ++++++++++++++++++++++++
+void Native7Lesson::draw()
+{
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -212,7 +211,7 @@ void Native7Lesson::draw() {
     // Translate the cube into the screen.
     mModelMatrix->identity();
     mModelMatrix->translate(0.0f, 0.0f, -3.5f);
-    mModelMatrix->rotate(angleInDegrees, 1, 1, 1);
+    //mModelMatrix->rotate(angleInDegrees, 1, 1, 1);
 
     // Set a matrix that contains the current rotation.
     mCurrentRotationMatrix->identity();
