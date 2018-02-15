@@ -89,6 +89,7 @@ void Native7Lesson::create() {
     float eyeX = 0.0f;
     float eyeY = 0.0f;
     float eyeZ = -0.5f;
+    //float eyeZ = -300.0f;
 
     // We are looking at the origin
     float centerX = 0.0f;
@@ -140,7 +141,8 @@ void Native7Lesson::create() {
 
     // ++++++++++++++++++++++++
     obj = new Obj();
-    obj->test();
+    //obj->test();
+    obj->parser();
     obj->initialize();
     // ++++++++++++++++++++++++
 }
@@ -195,7 +197,7 @@ void Native7Lesson::draw() {
     // ++++++++++++++++++++++++
     obj->mPositionHandle = positionHandle;
     obj->mNormalHandle = normalHandle;
-    obj->mTextureCoordHandle = textureCoordinateHandle;
+    //obj->mTextureCoordHandle = textureCoordinateHandle;
     // ++++++++++++++++++++++++
 
     // Calculate position of the light

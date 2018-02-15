@@ -14,7 +14,7 @@ android {
             cmake {
                 cppFlags "-frtti -fexceptions"
                 arguments "-DANDROID_PLATFORM_LEVEL=${platformVersion}",
-                        '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static'
+                        '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static', "-DANDROID_STL=c++_shared"
             }
         }
     }
