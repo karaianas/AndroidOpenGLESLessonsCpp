@@ -17,14 +17,32 @@ using namespace std;
 
 class Obj{
 
+//private:
+public:
+    GLuint mPositionHandle = 0;
+    GLuint mNormalHandle = 0;
+    GLuint mTextureCoordHandle = 0;
+
 private:
     GLuint mPositionsBufferIdx;
     GLuint mNormalsBufferIdx;
     GLuint mTexCoordsBufferIdx;
 
+    vector<float> positions;
+    vector<float> normals;
+    vector<float> texCoords;
+    vector<float> transfers;
+
 public:
     void test();
-    void initialize(vector<float> *positions, vector<float> *normals, vector<float> *textureCoords);
+    void initialize();
+    void renderer();
+
+    static int BYTES_PER_FLOAT;
+    static int  POSITION_STEP;
+    static int  NORMAL_STEP;
+    static int  TEXCOORD_STEP;
+    static int  TRANS_STEP;
 };
 
 

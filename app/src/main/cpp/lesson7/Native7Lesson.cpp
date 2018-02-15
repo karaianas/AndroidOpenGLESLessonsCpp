@@ -24,6 +24,10 @@ static Native7Lesson *lesson7;
 static GenData *genData;
 static Context g_ctx;
 
+// ++++++++++++++++++++++++
+Obj* obj;
+// ++++++++++++++++++++++++
+
 Native7Lesson::Native7Lesson() {
 
     mViewMatrix = nullptr;
@@ -100,9 +104,14 @@ void Native7Lesson::create() {
     mViewMatrix = Matrix::newLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
 
     // Main Program
-    const char *vertex = GLUtils::openTextFile("vertex/lesson_seven_vertex_shader.glsl");
-    const char *fragment = GLUtils::openTextFile(
-            "fragment/lesson_seven_fragment_shader.glsl");
+//    const char *vertex = GLUtils::openTextFile("vertex/lesson_seven_vertex_shader.glsl");
+//    const char *fragment = GLUtils::openTextFile(
+//            "fragment/lesson_seven_fragment_shader.glsl");
+
+    // ++++++++++++++++++++++++
+    const char *vertex = GLUtils::openTextFile("vertex/mydev_test_vertex_shader.glsl");
+    const char *fragment = GLUtils::openTextFile("fragment/mydev_test_fragment_shader.glsl");
+    // ++++++++++++++++++++++++
 
     // Set program handles
     mProgramHandle = GLUtils::createProgram(&vertex, &fragment);
@@ -128,6 +137,12 @@ void Native7Lesson::create() {
     mCurrentRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix = new Matrix();
     mLightModelMatrix = new Matrix();
+
+    // ++++++++++++++++++++++++
+    obj = new Obj();
+    obj->test();
+    obj->initialize();
+    // ++++++++++++++++++++++++
 }
 
 void Native7Lesson::change(int width, int height) {
@@ -150,7 +165,7 @@ void Native7Lesson::change(int width, int height) {
 void Native7Lesson::draw() {
 
     // ++++++++++++++++++++++++
-    test();
+    //test();
     // ++++++++++++++++++++++++
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -177,6 +192,11 @@ void Native7Lesson::draw() {
         genData->getCubes()->setPositionHandle(positionHandle);
         genData->getCubes()->setTextureCoordinateHandle(textureCoordinateHandle);
     }
+    // ++++++++++++++++++++++++
+    obj->mPositionHandle = positionHandle;
+    obj->mNormalHandle = normalHandle;
+    obj->mTextureCoordHandle = textureCoordinateHandle;
+    // ++++++++++++++++++++++++
 
     // Calculate position of the light
     // Rotate and then push into the distance.
@@ -253,9 +273,13 @@ void Native7Lesson::draw() {
     // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
     glUniform1i(mTextureUniformHandle, 0);
 
-    if (genData != nullptr && genData->getCubes() != nullptr) {
-        genData->getCubes()->renderer();
-    }
+    // ++++++++++++++++++++++++
+    obj->renderer();
+    // ++++++++++++++++++++++++
+
+//    if (genData != nullptr && genData->getCubes() != nullptr) {
+//        genData->getCubes()->renderer();
+//    }
 }
 
 void Native7Lesson::decreaseCubeCount() {
@@ -316,6 +340,7 @@ void Native7Lesson::test()
 {
     Obj obj = Obj();
     obj.test();
+    obj.initialize();
 }
 // ++++++++++++++++++++++++
 
