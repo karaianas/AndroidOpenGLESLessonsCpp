@@ -24,7 +24,7 @@ void main()
     v_Normal = vec3(u_MVMatrix * vec4(a_Normal, 0.0));
 
     // Pass transfer coefficients
-    v_Coeff = vec3(a_Coeff);
+    v_Coeff = vec3(a_Coeff[1], a_Coeff[2], a_Coeff[3]);
 
 	// gl_Position is a special variable used to store the final position.
 	// Multiply the vertex by the matrix to get the final point in normalized screen coordinates.

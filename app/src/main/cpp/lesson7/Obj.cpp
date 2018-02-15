@@ -6,6 +6,7 @@
 #include "Obj.h"
 
 #include <ctype.h>
+#include <math.h>
 
 using namespace std;
 
@@ -143,7 +144,8 @@ vector<short> processLine2(string line, int size)
 
 void Obj::parser()
 {
-    string path = "/planeNsphere.";
+    //string path = "/planeNsphere.";
+    string path = "/maxPlanck.";
     string modelPath = "models" + path + "model";
     string coeffPath = "coefficients" + path + "coeff";
     const char *buffer = GLUtils::openTextFile(modelPath.c_str());
@@ -165,9 +167,11 @@ void Obj::parser()
         vector<float> numbers = processLine(s, 6);
         if(numbers.size() == 6)
         {
-            positions.push_back(numbers[0]);
-            positions.push_back(numbers[1]);
-            positions.push_back(numbers[2]);
+            //float len = sqrt(numbers[0]*numbers[0] + numbers[1]*numbers[1] + numbers[2]*numbers[2]);
+            float scaleFactor = 0.1f;
+            positions.push_back(numbers[0] * scaleFactor);// / len);
+            positions.push_back(numbers[1] * scaleFactor);// / len);
+            positions.push_back(numbers[2] * scaleFactor);// / len);
 
             normals.push_back(numbers[3]);
             normals.push_back(numbers[4]);
@@ -214,18 +218,19 @@ void Obj::parser()
         }
         //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", numbers.size());
     }
-    //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", fcounter);
+    __android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", coeffs.size() / 4);
 //        char c = buffer[i];
 //        string s = to_string(c);
 //        const char* a = s.c_str();
 //        __android_log_print(ANDROID_LOG_INFO, "MyDev", "%s", a);
 
 
-    __android_log_print(ANDROID_LOG_INFO, "MyDev", "%d, %d", indices.size(), fcounter);
+    //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d, %d", indices.size(), fcounter);
 }
 
 void Obj::initialize()
 {
+
     // (1) Generate buffers
     GLuint buffers[4];
     glGenBuffers(4, buffers);
@@ -269,6 +274,8 @@ void Obj::initialize()
 
 void Obj::renderer()
 {
+
+
     // Pass in the position information
     glBindBuffer(GL_ARRAY_BUFFER, mPositionsBufferIdx);
     glEnableVertexAttribArray(mPositionHandle);
@@ -299,7 +306,7 @@ void Obj::renderer()
     //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferIdx);
-    glDrawElements(GL_TRIANGLES, indices.size() * 3, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

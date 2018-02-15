@@ -68,6 +68,9 @@ Native7Lesson::~Native7Lesson() {
     mProjectionMatrix = nullptr;
     delete mMVPMatrix;
     mMVPMatrix = nullptr;
+
+    delete obj;
+    obj = nullptr;
 }
 
 void Native7Lesson::create() {
@@ -155,13 +158,14 @@ void Native7Lesson::change(int width, int height) {
 
     // Create a new perspective projection matrix. The height will stay the same
     // while the width will vary as per aspect ratio.
+    float scaleFactor = 10.0f;
     float ratio = (float) width / height;
-    float left = -ratio;
-    float right = ratio;
-    float bottom = -1.0f;
-    float top = 1.0f;
-    float near = 1.0f;
-    float far = 10.0f;
+    float left = -ratio;// * scaleFactor;
+    float right = ratio;// * scaleFactor;
+    float bottom = -1.0f;// * scaleFactor;
+    float top = 1.0f;// * scaleFactor;
+    float near = 1.0f;// * scaleFactor;
+    float far = 10.0f;// * scaleFactor;
 
     mProjectionMatrix = Matrix::newFrustum(left, right, bottom, top, near, far);
 }
@@ -188,11 +192,11 @@ void Native7Lesson::draw()
     GLuint textureCoordinateHandle = (GLuint) glGetAttribLocation(mProgramHandle,
                                                                   "a_TexCoordinate");
 
-    if (genData != nullptr && genData->getCubes() != nullptr) {
-        genData->getCubes()->setNormalHandle(normalHandle);
-        genData->getCubes()->setPositionHandle(positionHandle);
-        genData->getCubes()->setTextureCoordinateHandle(textureCoordinateHandle);
-    }
+//    if (genData != nullptr && genData->getCubes() != nullptr) {
+//        genData->getCubes()->setNormalHandle(normalHandle);
+//        genData->getCubes()->setPositionHandle(positionHandle);
+//        genData->getCubes()->setTextureCoordinateHandle(textureCoordinateHandle);
+//    }
     // ++++++++++++++++++++++++
     GLuint coeffHandle = (GLuint) glGetAttribLocation(mProgramHandle, "a_Coeff");
     obj->mPositionHandle = positionHandle;
@@ -267,14 +271,14 @@ void Native7Lesson::draw()
                 mLightPosInEyeSpace[2]
     );
 
-    // Set the active texture unit to texture unit 0.
-    glActiveTexture(GL_TEXTURE0);
-
-    // Bind the texture to this unit.
-    glBindTexture(GL_TEXTURE_2D, mAndroidDataHandle);
-
-    // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
-    glUniform1i(mTextureUniformHandle, 0);
+//    // Set the active texture unit to texture unit 0.
+//    glActiveTexture(GL_TEXTURE0);
+//
+//    // Bind the texture to this unit.
+//    glBindTexture(GL_TEXTURE_2D, mAndroidDataHandle);
+//
+//    // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
+//    glUniform1i(mTextureUniformHandle, 0);
 
     // ++++++++++++++++++++++++
     obj->renderer();
@@ -459,6 +463,11 @@ Java_com_learnopengles_android_lesson7_LessonSevenNativeRenderer_nativeDestroy(J
     if (genData != nullptr) {
         delete (genData);
         genData = NULL;
+    }
+    if(obj != nullptr)
+    {
+        delete (obj);
+        obj = NULL;
     }
 }
 
