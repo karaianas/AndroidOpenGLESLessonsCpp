@@ -8,16 +8,23 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.learnopengles.android.cpp.R;
+
+// ++++++++++++++++++++++++++++++++++++
+import android.widget.TextView;
+import android.os.SystemClock;
+// ++++++++++++++++++++++++++++++++++++
 
 
 public class LessonSevenActivity extends Activity {
 
     private LessonSevenGLSurfaceView mGlSurfaceView;
     private Action mRender;
+    private double time;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,9 +136,12 @@ public class LessonSevenActivity extends Activity {
     }
 
     public void updateVboStatus(final boolean usingVbos) {
+
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 if (usingVbos) {
                     ((Button) findViewById(R.id.button_switch_VBOs)).setText(R.string.lesson_seven_using_VBOs);
                 } else {
@@ -153,6 +163,21 @@ public class LessonSevenActivity extends Activity {
             }
         });
     }
+
+    // ++++++++++++++++++++++++++++++++++++++++
+    public void updateFPS(final float fps)
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                ((TextView) findViewById(R.id.textViewFPS)).setText(String.format("%2.2f FPS", fps));
+
+            }
+        });
+    }
+    // ++++++++++++++++++++++++++++++++++++++++
 
     @Override
     protected void onDestroy() {

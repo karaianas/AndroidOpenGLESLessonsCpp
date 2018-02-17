@@ -6,7 +6,6 @@
 #include "Native7Lesson.h"
 #include "GenData.h"
 #include <android/log.h>
-#include <string.h>
 
 #define LOG_TAG "Lesson"
 #define LOGI(fmt, args...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##args)
@@ -55,6 +54,7 @@ Native7Lesson::Native7Lesson() {
     mLightPosInEyeSpace[1] = 0.0f;
     mLightPosInEyeSpace[2] = 0.0f;
     mLightPosInEyeSpace[3] = 0.0f;
+
 }
 
 Native7Lesson::~Native7Lesson() {
@@ -76,6 +76,9 @@ Native7Lesson::~Native7Lesson() {
 void Native7Lesson::create() {
 
 //    genData->setNative7Lesson(this);
+    // ++++++++++++++++++++++++
+    time = 0.0f;
+    // ++++++++++++++++++++++++
 
     genData->genCube(3, false, false);
 
@@ -172,6 +175,9 @@ void Native7Lesson::change(int width, int height) {
 
 void Native7Lesson::draw()
 {
+    //time += 0.01f;
+    currentTime = clock();
+    //updateFPS(time);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -287,6 +293,12 @@ void Native7Lesson::draw()
 //    if (genData != nullptr && genData->getCubes() != nullptr) {
 //        genData->getCubes()->renderer();
 //    }
+
+    float lastDeltaTime = CLOCKS_PER_SEC/deltaTime;
+    deltaTime = clock() - currentTime;
+    float currentDeltaTime = CLOCKS_PER_SEC/(deltaTime);
+    if(abs(int(lastDeltaTime) - int(currentDeltaTime)) > 1)
+        updateFPS(currentDeltaTime);
 }
 
 void Native7Lesson::decreaseCubeCount() {
@@ -348,6 +360,21 @@ void Native7Lesson::test()
     Obj obj = Obj();
     obj.test();
     obj.initialize();
+}
+
+void Native7Lesson::updateFPS(float fps)
+{
+    LOGD("FPS %2.2f", fps);
+    Context *pctx = &g_ctx;
+    JavaVM *javaVM = pctx->javaVM;
+    JNIEnv *env;
+    jint res = javaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+    if (JNI_OK != res) {
+        LOGE("Failed to Get env, ErrorCode = %d", res);
+        return;
+    }
+    jmethodID statusId = env->GetMethodID(pctx->nativeRendererClz, "updateFPS", "(F)V");
+    env->CallVoidMethod(pctx->nativeRendererObj, statusId, fps);
 }
 // ++++++++++++++++++++++++
 

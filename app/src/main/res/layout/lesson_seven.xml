@@ -7,11 +7,15 @@
 		android:id="@+id/gl_surface_view"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" />
+
+
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom|center_horizontal"
 		android:orientation="horizontal">
+
+
 		<Button
 			android:id="@+id/button_decrease_num_cubes"
 			android:layout_width="0dp"
@@ -36,6 +40,16 @@
 			android:layout_weight="1"
 			android:layout_height="match_parent"
 			android:text="@string/lesson_seven_using_stride" />
+
 	</LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewFPS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:text="0.0 fps"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@android:color/white" />
 
 </FrameLayout>

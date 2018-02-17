@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+
 public class LessonSevenNativeRenderer implements GLSurfaceView.Renderer, Action {
 
     private LessonSevenActivity mActivity;
@@ -79,6 +80,10 @@ public class LessonSevenNativeRenderer implements GLSurfaceView.Renderer, Action
     public void updateStrideStatus(boolean useStride) {
         mActivity.updateStrideStatus(useStride);
     }
+
+    // +++++++++++++++++++++++++++++
+    public void updateFPS(final float fps){mActivity.updateFPS(fps);}
+    // +++++++++++++++++++++++++++++
 
     public native void nativeInit();
 

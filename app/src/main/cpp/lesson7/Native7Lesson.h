@@ -10,17 +10,28 @@
 #include <graphics/Matrix.h>
 
 // ++++++++++++++++++++++++
+#include <string.h>
+#include <time.h>
+#include <stdlib.h>
 #include "Obj.h"
 // ++++++++++++++++++++++++
 
 class Native7Lesson {
 public:
+    // ++++++++++++++++++++++++
+    float time;
+    clock_t currentTime;
+    clock_t deltaTime;
+    // ++++++++++++++++++++++++
+
     Native7Lesson();
 
     ~Native7Lesson();
 
     // ++++++++++++++++++++++++
     void test();
+
+    void updateFPS(float fps);
     // ++++++++++++++++++++++++
 
     void create();
