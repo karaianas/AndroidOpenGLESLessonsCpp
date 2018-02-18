@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 public class Utils {
 
@@ -134,6 +135,44 @@ public class Utils {
         if (textureHandle[0] == 0) {
             throw new RuntimeException("Error loading texture.");
         }
+
+        return textureHandle[0];
+    }
+
+    public static int loadCubemap(final AssetManager manager, String [] path)
+    {
+        final int[] textureHandle = new int[1];
+        ByteBuffer fcbuffer = null;
+
+        GLES20.glGenTextures(1, textureHandle, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureHandle[0]);
+
+        for(int i = 0; i < 6; i++)
+        {
+            InputStream in = null;
+            try {
+                in = manager.open(path[i]);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return -1;
+            }
+            BitmapFactory.Options op = new BitmapFactory.Options();
+            op.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bmp = BitmapFactory.decodeStream(in, null, op);
+            fcbuffer = ByteBuffer.allocateDirect(bmp.getHeight() * bmp.getWidth() * 4);
+            bmp.copyPixelsToBuffer(fcbuffer);
+            fcbuffer.position(0);
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GLES20.GL_RGBA,
+                    bmp.getWidth(),bmp.getHeight() , 0,GLES20.GL_RGBA ,GLES20.GL_UNSIGNED_BYTE, fcbuffer);
+            fcbuffer = null;
+            bmp.recycle();
+        }
+
+        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_CUBE_MAP);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
 
         return textureHandle[0];
     }

@@ -29,6 +29,8 @@ public:
      */
     static GLuint loadTexture(const char *name);
 
+    static GLuint loadCubemap(const char * name[6]);
+
     /**
      * Create a program with the given vertex and framgent
      * shader source code.

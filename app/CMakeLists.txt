@@ -69,6 +69,11 @@ add_library(
                 src/main/cpp/lesson7/GenData.h
                 src/main/cpp/lesson7/Obj.cpp
                 src/main/cpp/lesson7/Obj.h
+                src/main/cpp/lesson7/Skybox.cpp
+                src/main/cpp/lesson7/Skybox.h
+                src/main/cpp/lesson7/MyDev01.cpp
+                src/main/cpp/lesson7/MyDev01.h
+
 
                 # lesson8
                 src/main/cpp/lesson8/Native8Lesson.cpp

@@ -95,7 +95,7 @@ long GLUtils::currentTimeMillis() {
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
-GLuint GLUtils::loadTexture(const char *path) {
+GLuint GLUtils:: loadTexture(const char *path) {
     GLuint textureId = 0;
     jclass utilsClass = sEnv->FindClass("com/learnopengles/android/Utils");
     if (utilsClass == NULL) {
@@ -112,6 +112,36 @@ GLuint GLUtils::loadTexture(const char *path) {
     textureId = (GLuint) sEnv->CallStaticIntMethod(utilsClass, loadTexture, sAssetManager, pathStr);
     sEnv->DeleteLocalRef(pathStr);
     return textureId;
+}
+
+GLuint GLUtils:: loadCubemap(const char *path[6])
+{
+    GLuint textureId = 0;
+    jclass utilsClass = sEnv->FindClass("com/learnopengles/android/Utils");
+    if (utilsClass == NULL) {
+        LOGE("Couldn't find utils class");
+        return (GLuint) -1;
+    }
+    jmethodID loadCubemap = sEnv->GetStaticMethodID(utilsClass, "loadCubemap",
+                                                    "(Landroid/content/res/AssetManager;[Ljava/lang/String;)I");
+    if (loadCubemap == NULL) {
+        LOGE("Couldn't find loadCubemap method");
+        return (GLuint) -1;
+    }
+
+    // -----------
+    jobjectArray sArray;
+    sArray= (jobjectArray)sEnv->NewObjectArray(6, sEnv->FindClass("java/lang/String"), sEnv->NewStringUTF(""));
+
+    for(int i = 0; i < 6; i++)
+    {
+        sEnv->SetObjectArrayElement(sArray,i,sEnv->NewStringUTF(path[i]));
+    }
+
+    textureId = (GLuint) sEnv->CallStaticIntMethod(utilsClass, loadCubemap, sAssetManager, sArray);
+    sEnv->DeleteLocalRef(sArray);
+    return textureId;
+
 }
 
 void GLUtils::setEnvAndAssetManager(JNIEnv *env, jobject assetManager) {

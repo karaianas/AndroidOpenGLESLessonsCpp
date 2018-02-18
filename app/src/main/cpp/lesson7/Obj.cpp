@@ -2,11 +2,11 @@
 // Created by karaianas on 2/14/2018.
 //
 
-#include <cstdlib>
 #include "Obj.h"
-
-#include <ctype.h>
-#include <math.h>
+#define LOG_TAG "Obj"
+#define LOGI(fmt, args...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##args)
+#define LOGD(fmt, args...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, fmt, ##args)
+#define LOGE(fmt, args...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, fmt, ##args)
 
 using namespace std;
 
@@ -14,83 +14,114 @@ int Obj::BYTES_PER_FLOAT = 4;
 int Obj::BYTES_PER_SHORT = 2;
 int Obj::POSITION_STEP = 3;
 int Obj::NORMAL_STEP = 3;
-//int Obj::TEXCOORD_STEP = 2;
 int Obj::COEFF_STEP = 4;
-// Need to put order here
 
-
-void Obj::test()
+Obj::Obj()
 {
-    //__android_log_print(ANDROID_LOG_INFO, "MyDev", "hello");
+}
 
-    positions.push_back(0.0f);
-    positions.push_back(0.0f);
-    positions.push_back(0.0f);
+void Obj::initialize(GLuint program)
+{
 
-    positions.push_back(1.0f);
-    positions.push_back(0.0f);
-    positions.push_back(0.0f);
+    // (1) Generate buffers
+    GLuint buffers[4];
+    glGenBuffers(4, buffers);
 
-    positions.push_back(1.0f);
-    positions.push_back(1.0f);
-    positions.push_back(0.0f);
+    // (2) Bind buffers
+    // Bind to the buffer. Future commands will affect this buffer specifically.
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
 
-    positions.push_back(0.0f);
-    positions.push_back(0.0f);
-    positions.push_back(0.0f);
+    glBufferData(GL_ARRAY_BUFFER, positions.size() * BYTES_PER_FLOAT,
+                 positions.data(),
+                 GL_STATIC_DRAW);
 
-    positions.push_back(1.0f);
-    positions.push_back(1.0f);
-    positions.push_back(0.0f);
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+    glBufferData(GL_ARRAY_BUFFER, normals.size() * BYTES_PER_FLOAT, normals.data(),
+                 GL_STATIC_DRAW);
 
-    positions.push_back(0.0f);
-    positions.push_back(1.0f);
-    positions.push_back(0.0f);
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
+    glBufferData(GL_ARRAY_BUFFER, coeffs.size() * BYTES_PER_FLOAT, coeffs.data(),
+                 GL_STATIC_DRAW);
 
-    normals.push_back(0.0f);
-    normals.push_back(0.0f);
-    normals.push_back(1.0f);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[3]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()
+                                          * BYTES_PER_SHORT,
+                 indices.data(), GL_STATIC_DRAW);
 
-    normals.push_back(0.0f);
-    normals.push_back(0.0f);
-    normals.push_back(1.0f);
+    // IMPORTANT: Unbind from the buffer when we're done with it.
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    normals.push_back(0.0f);
-    normals.push_back(0.0f);
-    normals.push_back(1.0f);
+    mPositionsBufferIdx = buffers[0];
+    mNormalsBufferIdx = buffers[1];
+    mCoeffsBufferIdx = buffers[2];
+    mIndexBufferIdx = buffers[3];
 
-    normals.push_back(0.0f);
-    normals.push_back(0.0f);
-    normals.push_back(1.0f);
+    mModelMatrix = new Matrix();
+    mMVPMatrix = new Matrix();
+    mMVMatrix = new Matrix();
+    mViewMatrix = new Matrix();
+    mProjectionMatrix = new Matrix();
 
-    normals.push_back(0.0f);
-    normals.push_back(0.0f);
-    normals.push_back(1.0f);
+//    mPositionHandle = (GLuint) glGetUniformLocation(program, "a_Position");
+//    mNormalHandle = (GLuint) glGetUniformLocation(program, "a_Normal");
+//    mCoeffHandle = (GLuint) glGetUniformLocation(program, "a_Coeff");
+//    mMVPMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVPMatrix");
+//    mMVMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVMatrix");
 
-    normals.push_back(0.0f);
-    normals.push_back(0.0f);
-    normals.push_back(1.0f);
+}
 
-    /*
-    texCoords.push_back(0.0f);
-    texCoords.push_back(0.0f);
 
-    texCoords.push_back(0.0f);
-    texCoords.push_back(1.0f);
+void Obj::renderer(GLuint program)
+{
 
-    texCoords.push_back(1.0f);
-    texCoords.push_back(0.0f);
+//    LOGD("%d %d %d %d", positions.size()/3, normals.size()/3, coeffs.size()/4, indices.size()/3);
+//    LOGD("%d %d %d", program, mMVMatrixHandle, mMVPMatrixHandle);
 
-    texCoords.push_back(0.0f);
-    texCoords.push_back(1.0f);
+    // Pass in the position information
+    glBindBuffer(GL_ARRAY_BUFFER, mPositionsBufferIdx);
+    glEnableVertexAttribArray(mPositionHandle);
+    glVertexAttribPointer(mPositionHandle, POSITION_STEP, GL_FLOAT, GL_FALSE, 0, 0);
 
-    texCoords.push_back(1.0f);
-    texCoords.push_back(1.0f);
+    // Pass in the normal information
+    glBindBuffer(GL_ARRAY_BUFFER, mNormalsBufferIdx);
+    glEnableVertexAttribArray(mNormalHandle);
+    glVertexAttribPointer(mNormalHandle, NORMAL_STEP, GL_FLOAT, GL_FALSE, 0, 0);
 
-    texCoords.push_back(1.0f);
-    texCoords.push_back(0.0f);
-     */
+    // Pass in the coefficient information
+    glBindBuffer(GL_ARRAY_BUFFER, mCoeffsBufferIdx);
+    glEnableVertexAttribArray(mCoeffHandle);
+    glVertexAttribPointer(mCoeffHandle, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
 
+    // Pass in matrix information
+    //mMVPMatrix->multiply(*mViewMatrix, *mModelMatrix);
+    glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVMatrix->mData);
+
+    //mMVPMatrix->multiply(*mProjectionMatrix, *mMVPMatrix);
+    glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix->mData);
+
+
+    // Clear the currently bound buffer (so future OpenGL calls do not use this buffer).
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+//    glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferIdx);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
+
+void Obj::setViewMatrix(Matrix *V)
+{
+    mViewMatrix = V;
+}
+
+void Obj::setProjectionMatrix(Matrix *P)
+{
+    mProjectionMatrix = P;
 }
 
 vector<float> processLine(string line, int size)
@@ -141,7 +172,6 @@ vector<short> processLine2(string line, int size)
     return result;
 }
 
-
 void Obj::parser()
 {
     //string path = "/planeNsphere.";
@@ -149,11 +179,11 @@ void Obj::parser()
     string modelPath = "models" + path + "model";
     string coeffPath = "coefficients" + path + "coeff";
     const char *buffer = GLUtils::openTextFile(modelPath.c_str());
-    //const char *buffer = GLUtils::openTextFile("models/maxPlanck.model");
 
     int lineCount = 0;
     int vcounter = 0;
     int fcounter = 0;
+    // Need to change the limit at some point
     for(int i = 0; lineCount < 10000; i++) {
         string s;
         while (buffer[i] != '\n')
@@ -218,96 +248,13 @@ void Obj::parser()
         }
         //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", numbers.size());
     }
-    __android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", coeffs.size() / 4);
+    //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", coeffs.size() / 4);
 //        char c = buffer[i];
 //        string s = to_string(c);
 //        const char* a = s.c_str();
 //        __android_log_print(ANDROID_LOG_INFO, "MyDev", "%s", a);
 
-
     //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d, %d", indices.size(), fcounter);
 }
 
-void Obj::initialize()
-{
 
-    // (1) Generate buffers
-    GLuint buffers[4];
-    glGenBuffers(4, buffers);
-
-    // (2) Bind buffers
-    // Bind to the buffer. Future commands will affect this buffer specifically.
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-
-    glBufferData(GL_ARRAY_BUFFER, positions.size() * BYTES_PER_FLOAT,
-                 positions.data(),
-                 GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * BYTES_PER_FLOAT, normals.data(),
-                 GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-    glBufferData(GL_ARRAY_BUFFER, coeffs.size() * BYTES_PER_FLOAT, coeffs.data(),
-                 GL_STATIC_DRAW);
-
-//    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-//    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * BYTES_PER_FLOAT,
-//                 texCoords.data(),
-//                 GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[3]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()
-                                          * BYTES_PER_SHORT,
-                 indices.data(), GL_STATIC_DRAW);
-
-    // IMPORTANT: Unbind from the buffer when we're done with it.
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    mPositionsBufferIdx = buffers[0];
-    mNormalsBufferIdx = buffers[1];
-    mCoeffsBufferIdx = buffers[2];
-    //mTexCoordsBufferIdx = buffers[2];
-    mIndexBufferIdx = buffers[3];
-}
-
-void Obj::renderer()
-{
-
-
-    // Pass in the position information
-    glBindBuffer(GL_ARRAY_BUFFER, mPositionsBufferIdx);
-    glEnableVertexAttribArray(mPositionHandle);
-    glVertexAttribPointer(mPositionHandle, POSITION_STEP, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // Pass in the normal information
-    glBindBuffer(GL_ARRAY_BUFFER, mNormalsBufferIdx);
-    glEnableVertexAttribArray(mNormalHandle);
-    glVertexAttribPointer(mNormalHandle, NORMAL_STEP, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // Pass in the coefficient information
-    glBindBuffer(GL_ARRAY_BUFFER, mCoeffsBufferIdx);
-    glEnableVertexAttribArray(mCoeffHandle);
-    glVertexAttribPointer(mCoeffHandle, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // Pass in the texture information
-//    glBindBuffer(GL_ARRAY_BUFFER, mTexCoordsBufferIdx);
-//    glEnableVertexAttribArray(mTextureCoordHandle);
-//    glVertexAttribPointer(mTextureCoordHandle, TEXCOORD_STEP, GL_FLOAT,
-//                          GL_FALSE,
-//                          0, 0);
-
-    // Clear the currently bound buffer (so future OpenGL calls do not use this buffer).
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // Draw the mCubes.
-    //glDrawArrays(GL_TRIANGLES, 0, mActualCubeFactor * mActualCubeFactor * mActualCubeFactor * 36);
-    //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferIdx);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}

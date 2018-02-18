@@ -7,51 +7,62 @@
 
 #include <vector>
 #include <GLES2/gl2.h>
-
-// ++++++++++++++++++++++++
 #include <android/log.h>
 #include <GLES3/gl3.h>
 #include <graphics/GLUtils.h>
+
 #include <string>
-// ++++++++++++++++++++++++
+#include <ctype.h>
+#include <math.h>
+#include <cstdlib>
+#include <graphics/Matrix.h>
 
 using namespace std;
 
 class Obj{
 
-//private:
 public:
-    // These should eventually be private variables
+
+    Obj();
+
+    void initialize(GLuint program);
+    void renderer(GLuint program);
+
+    void setViewMatrix(Matrix* V);
+    void setProjectionMatrix(Matrix* P);
+
+    void parser();
+
+//private:
+
+    Matrix *mModelMatrix;
+    Matrix *mViewMatrix;
+    Matrix *mProjectionMatrix;
+    Matrix *mMVPMatrix;
+    Matrix *mMVMatrix;
+
     GLuint mPositionHandle = 0;
     GLuint mNormalHandle = 0;
     GLuint mCoeffHandle = 0;
-    //GLuint mTextureCoordHandle = 0;
+    GLuint mMVPMatrixHandle = 0;
+    GLuint mMVMatrixHandle = 0;
 
-private:
     GLuint mPositionsBufferIdx;
     GLuint mNormalsBufferIdx;
-    GLuint mTexCoordsBufferIdx;
-
     GLuint mIndexBufferIdx;
     GLuint mCoeffsBufferIdx;
 
     vector<float> positions;
     vector<float> normals;
     vector<short> indices;
-    //vector<float> texCoords;
     vector<float> coeffs;
 
 public:
-    void test();
-    void parser();
-    void initialize();
-    void renderer();
 
     static int BYTES_PER_FLOAT;
     static int BYTES_PER_SHORT;
     static int  POSITION_STEP;
     static int  NORMAL_STEP;
-    //static int  TEXCOORD_STEP;
     static int  COEFF_STEP;
 };
 

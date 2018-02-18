@@ -8,6 +8,14 @@
 #include <vector>
 #include <GLES2/gl2.h>
 
+
+// +++++++++++++++++++++++++++++
+#include <fstream>
+#include <cstring>
+#include <cstddef>
+#include <iostream>
+// +++++++++++++++++++++++++++++
+
 using namespace std;
 
 class Cubes {

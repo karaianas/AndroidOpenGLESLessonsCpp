@@ -7,6 +7,10 @@
 #include "GenData.h"
 #include <android/log.h>
 
+//#include "Obj.h"
+#include "MyDev01.h"
+//#include "Skybox.h"
+
 #define LOG_TAG "Lesson"
 #define LOGI(fmt, args...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##args)
 #define LOGD(fmt, args...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, fmt, ##args)
@@ -23,43 +27,30 @@ static Native7Lesson *lesson7;
 static GenData *genData;
 static Context g_ctx;
 
-// ++++++++++++++++++++++++
-Obj* obj;
-// ++++++++++++++++++++++++
+MyDev01* mydev01;
 
 Native7Lesson::Native7Lesson() {
 
+    mydev01 = new MyDev01();
+    /*
     mViewMatrix = nullptr;
     mModelMatrix = nullptr;
     mProjectionMatrix = nullptr;
     mMVPMatrix = nullptr;
-    mLightModelMatrix = nullptr;
 
     mMVPMatrixHandle = 0;
     mMVMatrixHandle = 0;
-    mLightPosHandle = 0;
-    mPointProgramHandle = 0;
 
-    mLightPosInModelSpace[0] = 0.0f;
-    mLightPosInModelSpace[1] = 0.0f;
-    mLightPosInModelSpace[2] = 0.0f;
-    mLightPosInModelSpace[3] = 1.0f;
-
-    mLightPosInWorldSpace[0] = 0.0f;
-    mLightPosInWorldSpace[1] = 0.0f;
-    mLightPosInWorldSpace[2] = 0.0f;
-    mLightPosInWorldSpace[3] = 0.0f;
-
-    mLightPosInEyeSpace[0] = 0.0f;
-    mLightPosInEyeSpace[1] = 0.0f;
-    mLightPosInEyeSpace[2] = 0.0f;
-    mLightPosInEyeSpace[3] = 0.0f;
-
+    obj = new Obj();
+    obj->parser();
+    skybox = new Skybox();
+     */
 }
 
 Native7Lesson::~Native7Lesson() {
-    delete genData;
-    genData = nullptr;
+
+    delete mydev01;
+    /*
     delete mModelMatrix;
     mModelMatrix = nullptr;
     delete mViewMatrix;
@@ -68,41 +59,25 @@ Native7Lesson::~Native7Lesson() {
     mProjectionMatrix = nullptr;
     delete mMVPMatrix;
     mMVPMatrix = nullptr;
-
-    delete obj;
-    obj = nullptr;
+     */
 }
 
 void Native7Lesson::create() {
 
-//    genData->setNative7Lesson(this);
-    // ++++++++++++++++++++++++
-    time = 0.0f;
-    // ++++++++++++++++++++++++
-
-    genData->genCube(3, false, false);
-
+    mydev01->create();
+    /*
     // Set the background clear color to black
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-    // Use culling to remove back face.
-    glEnable(GL_CULL_FACE);
-
-    // Enable depth testing
-    glEnable(GL_DEPTH_TEST);
 
     // Position the eye in front of the origin.
     float eyeX = 0.0f;
     float eyeY = 0.0f;
-    //float eyeY = 0.2f;
-    float eyeZ = -0.5f;
-    //float eyeZ = 5.0f;
+    float eyeZ = 5.0f;
 
     // We are looking at the origin
     float centerX = 0.0f;
     float centerY = 0.0f;
-    float centerZ = -5.0f;
-    //float centerZ = 0.0f;
+    float centerZ = 0.0f;
 
     // Set our up vector.
     float upX = 0.0f;
@@ -110,17 +85,14 @@ void Native7Lesson::create() {
     float upZ = 0.0f;
 
     // Set the view matrix.
+    mViewMatrix = new Matrix();
     mViewMatrix = Matrix::newLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
 
-    // Main Program
-//    const char *vertex = GLUtils::openTextFile("vertex/lesson_seven_vertex_shader.glsl");
-//    const char *fragment = GLUtils::openTextFile(
-//            "fragment/lesson_seven_fragment_shader.glsl");
-
-    // ++++++++++++++++++++++++
     const char *vertex = GLUtils::openTextFile("vertex/mydev_test_vertex_shader.glsl");
     const char *fragment = GLUtils::openTextFile("fragment/mydev_test_fragment_shader.glsl");
-    // ++++++++++++++++++++++++
+
+    const char *vertex2 = GLUtils::openTextFile("vertex/mydev_skybox_vertex_shader.glsl");
+    const char *fragment2 = GLUtils::openTextFile("fragment/mydev_skybox_fragment_shader.glsl");
 
     // Set program handles
     mProgramHandle = GLUtils::createProgram(&vertex, &fragment);
@@ -129,34 +101,36 @@ void Native7Lesson::create() {
         return;
     }
 
-    // Load the texture
-    mAndroidDataHandle = GLUtils::loadTexture("texture/usb_android.png");
-    glGenerateMipmap(GL_TEXTURE_2D);
+    mSkyProgramHandle = GLUtils::createProgram(&vertex2, &fragment2);
+    if (!mSkyProgramHandle) {
+        LOGD("Could not create skybox program");
+        return;
+    }
 
-    glBindTexture(GL_TEXTURE_2D, mAndroidDataHandle);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    LOGD("%d %d", mProgramHandle, mSkyProgramHandle);
 
-    glBindTexture(GL_TEXTURE_2D, mAndroidDataHandle);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    obj->initialize(mProgramHandle);
+    skybox->initialize(mSkyProgramHandle);
+
 
     mModelMatrix = new Matrix();
+    mModelMatrix->identity();
+
     mMVPMatrix = new Matrix();
-    mViewMatrix = new Matrix();
     mProjectionMatrix = new Matrix();
     mCurrentRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix = new Matrix();
-    mLightModelMatrix = new Matrix();
+    mAccumulatedRotationMatrix->identity();
 
-    // ++++++++++++++++++++++++
-    obj = new Obj();
-    //obj->test();
-    obj->parser();
-    obj->initialize();
-    // ++++++++++++++++++++++++
+    mDeltaX = 0.0f;
+    mDeltaY = 0.0f;
+     */
 }
 
 void Native7Lesson::change(int width, int height) {
 
+    mydev01->change(width, height);
+    /*
     glViewport(0, 0, width, height);
 
     // Create a new perspective projection matrix. The height will stay the same
@@ -168,13 +142,16 @@ void Native7Lesson::change(int width, int height) {
     float bottom = -1.0f;// * scaleFactor;
     float top = 1.0f;// * scaleFactor;
     float near = 1.0f;// * scaleFactor;
-    float far = 10.0f;// * scaleFactor;
+    float far = 100.0f;// * scaleFactor;
 
     mProjectionMatrix = Matrix::newFrustum(left, right, bottom, top, near, far);
+     */
 }
 
 void Native7Lesson::draw()
 {
+    mydev01->draw();
+    /*
     //time += 0.01f;
     currentTime = clock();
     //updateFPS(time);
@@ -185,44 +162,32 @@ void Native7Lesson::draw()
     long time = GLUtils::currentTimeMillis() % 10000L;
     float angleInDegrees = (360.0f / 100000.0f) * ((int) time);
 
-    // Set our per-vertex lighting program.
-    glUseProgram(mProgramHandle);
-
     // Set program handles for cube drawing.
     mMVPMatrixHandle = (GLuint) glGetUniformLocation(mProgramHandle, "u_MVPMatrix");
     mMVMatrixHandle = (GLuint) glGetUniformLocation(mProgramHandle, "u_MVMatrix");
-    mLightPosHandle = (GLuint) glGetUniformLocation(mProgramHandle, "u_LightPos");
-    mTextureUniformHandle = (GLuint) glGetUniformLocation(mProgramHandle, "u_Texture");
     GLuint positionHandle = (GLuint) glGetAttribLocation(mProgramHandle, "a_Position");
     GLuint normalHandle = (GLuint) glGetAttribLocation(mProgramHandle, "a_Normal");
-    GLuint textureCoordinateHandle = (GLuint) glGetAttribLocation(mProgramHandle,
-                                                                  "a_TexCoordinate");
-
-//    if (genData != nullptr && genData->getCubes() != nullptr) {
-//        genData->getCubes()->setNormalHandle(normalHandle);
-//        genData->getCubes()->setPositionHandle(positionHandle);
-//        genData->getCubes()->setTextureCoordinateHandle(textureCoordinateHandle);
-//    }
-    // ++++++++++++++++++++++++
     GLuint coeffHandle = (GLuint) glGetAttribLocation(mProgramHandle, "a_Coeff");
+
+    GLuint positionHandle2 = (GLuint) glGetAttribLocation(mSkyProgramHandle, "a_Position");
+    mMVPMatrixHandle2 = (GLuint) glGetUniformLocation(mSkyProgramHandle, "u_MVPMatrix");
+    mMVMatrixHandle2 = (GLuint) glGetUniformLocation(mSkyProgramHandle, "u_MVMatrix");
+
     obj->mPositionHandle = positionHandle;
     obj->mNormalHandle = normalHandle;
     obj->mCoeffHandle = coeffHandle;
-    //obj->mTextureCoordHandle = textureCoordinateHandle;
-    // ++++++++++++++++++++++++
+    obj->mMVMatrixHandle = mMVMatrixHandle;
+    obj->mMVPMatrixHandle = mMVPMatrixHandle;
 
-    // Calculate position of the light
-    // Rotate and then push into the distance.
-    mLightModelMatrix->identity();
-    mLightModelMatrix->translate(0, 0, -1);
+    skybox->mPositionHandle = positionHandle2;
+    skybox->mMVPMatrixHandle = mMVPMatrixHandle2;
+    skybox->mMVMatrixHandle = mMVMatrixHandle2;
 
-    Matrix::multiplyMV(mLightPosInWorldSpace, mLightModelMatrix->mData, mLightPosInModelSpace);
-    Matrix::multiplyMV(mLightPosInEyeSpace, mViewMatrix->mData, mLightPosInWorldSpace);
 
     // Draw a cube.
     // Translate the cube into the screen.
-    mModelMatrix->identity();
-    mModelMatrix->translate(0.0f, 0.0f, -3.5f);
+    //mModelMatrix->identity();
+    //mModelMatrix->translate(0.0f, 0.0f, -3.5f);
     //mModelMatrix->rotate(angleInDegrees, 1, 1, 1);
 
     // Set a matrix that contains the current rotation.
@@ -231,74 +196,39 @@ void Native7Lesson::draw()
     mCurrentRotationMatrix->rotate(mDeltaY, 1.0f, 0.0f, 0.0f);
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
+    mModelMatrix->multiply(*mCurrentRotationMatrix, *mModelMatrix);
 
-    Matrix tempMatrix;
 
-    // Multiply the current rotation by the accumulated rotation, and then set the accumulated rotation to the result.
-    tempMatrix.identity();
-    tempMatrix.multiply(*mCurrentRotationMatrix, *mAccumulatedRotationMatrix);
-    mAccumulatedRotationMatrix->loadWith(tempMatrix);
-
-    // Rotate the cube taking the overall rotation into account.
-    tempMatrix.identity();
-    tempMatrix.multiply(*mModelMatrix, *mAccumulatedRotationMatrix);
-    mModelMatrix->loadWith(tempMatrix);
-
-    // This multiplies the view by the model matrix
-    // and stores the result the MVP matrix.
-    // which currently contains model * view
     mMVPMatrix->multiply(*mViewMatrix, *mModelMatrix);
+    glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVPMatrix->mData);
+    obj->mMVMatrix = mMVPMatrix;
 
-    // Pass in the model view matrix
-    glUniformMatrix4fv(
-            mMVMatrixHandle,
-            1,
-            GL_FALSE,
-            mMVPMatrix->mData
-    );
+    glUniformMatrix4fv(mMVMatrixHandle2, 1, GL_FALSE, mMVPMatrix->mData);
+    skybox->mMVMatrix = mMVPMatrix;
 
-    // This multiplies the model view matrix by the projection matrix
-    // and stores the result in the MVP matrix.
-    // which no contains model * view * projection
     mMVPMatrix->multiply(*mProjectionMatrix, *mMVPMatrix);
+    glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix->mData);
+    obj->mMVPMatrix = mMVPMatrix;
 
-    // Pass in the model view projection matrix
-    glUniformMatrix4fv(
-            mMVPMatrixHandle,
-            1,
-            GL_FALSE,
-            mMVPMatrix->mData
-    );
+    glUniformMatrix4fv(mMVPMatrixHandle2, 1, GL_FALSE, mMVPMatrix->mData);
+    skybox->mMVPMatrix = mMVPMatrix;
 
-    // Pass in the light position in eye space
-    glUniform3f(mLightPosHandle,
-                mLightPosInEyeSpace[0],
-                mLightPosInEyeSpace[1],
-                mLightPosInEyeSpace[2]
-    );
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glUseProgram(mSkyProgramHandle);
+    skybox->renderer(mSkyProgramHandle);
 
-//    // Set the active texture unit to texture unit 0.
-//    glActiveTexture(GL_TEXTURE0);
-//
-//    // Bind the texture to this unit.
-//    glBindTexture(GL_TEXTURE_2D, mAndroidDataHandle);
-//
-//    // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
-//    glUniform1i(mTextureUniformHandle, 0);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glUseProgram(mProgramHandle);
+    obj->renderer(mProgramHandle);
 
-    // ++++++++++++++++++++++++
-    obj->renderer();
-    // ++++++++++++++++++++++++
-
-//    if (genData != nullptr && genData->getCubes() != nullptr) {
-//        genData->getCubes()->renderer();
-//    }
-
-    float lastDeltaTime = CLOCKS_PER_SEC/deltaTime;
-    deltaTime = clock() - currentTime;
-    float currentDeltaTime = CLOCKS_PER_SEC/(deltaTime);
-    if(abs(int(lastDeltaTime) - int(currentDeltaTime)) > 1)
-        updateFPS(currentDeltaTime);
+//    float lastDeltaTime = CLOCKS_PER_SEC/deltaTime;
+//    deltaTime = clock() - currentTime;
+//    float currentDeltaTime = CLOCKS_PER_SEC/(deltaTime);
+//    if(abs(int(lastDeltaTime) - int(currentDeltaTime)) > 1)
+//        updateFPS(currentDeltaTime);
+     */
 }
 
 void Native7Lesson::decreaseCubeCount() {
@@ -316,6 +246,8 @@ void Native7Lesson::increaseCubeCount() {
 void Native7Lesson::setDelta(float x, float y) {
     mDeltaX += x;
     mDeltaY += y;
+
+    mydev01->setDelta(x, y);
 }
 
 void Native7Lesson::toggleStride() {
@@ -355,13 +287,6 @@ void Native7Lesson::updateStrideStatus(bool useStride) {
 }
 
 // ++++++++++++++++++++++++
-void Native7Lesson::test()
-{
-    Obj obj = Obj();
-    obj.test();
-    obj.initialize();
-}
-
 void Native7Lesson::updateFPS(float fps)
 {
     LOGD("FPS %2.2f", fps);
@@ -490,11 +415,6 @@ Java_com_learnopengles_android_lesson7_LessonSevenNativeRenderer_nativeDestroy(J
     if (genData != nullptr) {
         delete (genData);
         genData = NULL;
-    }
-    if(obj != nullptr)
-    {
-        delete (obj);
-        obj = NULL;
     }
 }
 

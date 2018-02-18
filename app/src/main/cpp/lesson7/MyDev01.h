@@ -1,15 +1,15 @@
 //
-// Created by biezhihua on 2017/7/22.
+// Created by karaianas on 2/17/2018.
 //
 
-#ifndef OPENGLLESSON_NATIVE7LESSON_H
-#define OPENGLLESSON_NATIVE7LESSON_H
-
+#ifndef ANDROIDOPENGLESLESSONSCPP_MYDEV01_H
+#define ANDROIDOPENGLESLESSONSCPP_MYDEV01_H
 
 #include <GLES2/gl2.h>
 #include <graphics/Matrix.h>
+#include <graphics/GLUtils.h>
+#include <android/log.h>
 
-// ++++++++++++++++++++++++
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
@@ -19,47 +19,34 @@
 #include <iostream>
 #include <string>
 
+#define LOG_TAG "MyDev01"
+#define LOGI(fmt, args...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##args)
+#define LOGD(fmt, args...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, fmt, ##args)
+#define LOGE(fmt, args...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, fmt, ##args)
+
 #include "Obj.h"
 #include "Skybox.h"
-// +++++++++++++++++++++++++++++
 
-class Native7Lesson {
+class MyDev01{
+
 public:
-    // ++++++++++++++++++++++++
     float time;
     clock_t currentTime;
     clock_t deltaTime;
-    // ++++++++++++++++++++++++
 
-    Native7Lesson();
+    MyDev01();
+    ~MyDev01();
 
-    ~Native7Lesson();
-
-    // ++++++++++++++++++++++++
     void updateFPS(float fps);
-    // ++++++++++++++++++++++++
 
     void create();
-
     void change(int width, int height);
-
     void draw();
-
-    void decreaseCubeCount();
-
-    void increaseCubeCount();
 
     void setDelta(float x, float y);
 
-    void toggleStride();
-
-    void toggleVBOs();
-
-    void updateVboStatus(bool useVbos);
-
-    void updateStrideStatus(bool useStride);
-
-private:
+    Obj* obj;
+    Skybox* skybox;
 
     // model/view/projection matrix
     Matrix *mModelMatrix;
@@ -85,4 +72,4 @@ private:
 };
 
 
-#endif //OPENGLLESSON_NATIVE7LESSON_H
+#endif //ANDROIDOPENGLESLESSONSCPP_MYDEV01_H
