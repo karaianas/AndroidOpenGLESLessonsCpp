@@ -52,17 +52,10 @@ public:
     Matrix *mModelMatrix;
     Matrix *mViewMatrix;
     Matrix *mProjectionMatrix;
-    Matrix *mMVPMatrix;
 
     //
     Matrix *mAccumulatedRotationMatrix;
     Matrix *mCurrentRotationMatrix;
-
-    //
-    GLuint mMVPMatrixHandle;
-    GLuint mMVMatrixHandle;
-    GLuint mMVPMatrixHandle2;
-    GLuint mMVMatrixHandle2;
 
     GLuint mProgramHandle;
     GLuint mSkyProgramHandle;

@@ -19,7 +19,7 @@ Skybox::Skybox()
         positions[i] *= 10.f;
 }
 
-void Skybox::initialize(GLuint program)
+void Skybox::initialize(GLuint mProgramHandle)
 {
 
     // (1) Generate buffers
@@ -33,35 +33,33 @@ void Skybox::initialize(GLuint program)
                  positions.data(),
                  GL_STATIC_DRAW);
 
-    //glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-
-
     // IMPORTANT: Unbind from the buffer when we're done with it.
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     mPositionsBufferIdx = buffers[0];
 
     const char * paths[6] = {"texture/right.png", "texture/left.png", "texture/top.png", "texture/bottom.png", "texture/near.png", "texture/far.png"};
     mSkyboxBufferIdx = GLUtils::loadCubemap(paths);
 
-//    mPositionHandle = (GLuint) glGetUniformLocation(program, "a_Position");
-//    mSkyboxHandle = (GLuint) glGetUniformLocation(program, "skybox");
-//    mMVPMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVPMatrix");
-//    mMVMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVMatrix");
+    mModelMatrix = Matrix();
+    mModelMatrix.identity();
+    mMVPMatrix = Matrix();
+    mMVMatrix = Matrix();
+    mViewMatrix = Matrix();
+    mProjectionMatrix = Matrix();
 
-    mModelMatrix = new Matrix();
-    mModelMatrix->identity();
-    mMVPMatrix = new Matrix();
-    mMVMatrix = new Matrix();
-    mViewMatrix = new Matrix();
-    mProjectionMatrix = new Matrix();
+    program = mProgramHandle;
 }
 
-void Skybox::renderer(GLuint program)
+void Skybox::renderer()
 {
-    //LOGD("%d", positions.size()/3);
-    //LOGD("%d %d %d", program, mMVMatrixHandle, mMVPMatrixHandle);
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glUseProgram(program);
+
+    mPositionHandle = (GLuint) glGetAttribLocation(program, "a_Position");
+    mMVPMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVPMatrix");
+    mMVMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVMatrix");
 
     // Pass in the position information
     glBindBuffer(GL_ARRAY_BUFFER, mPositionsBufferIdx);
@@ -74,24 +72,13 @@ void Skybox::renderer(GLuint program)
     glUniform1i(mSkyboxHandle, 0);
 
     // Pass in matrix information
-    //mMVPMatrix->multiply(*mViewMatrix, *mModelMatrix);
-    glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVPMatrix->mData);
+    mMVMatrix.multiply(mViewMatrix, mModelMatrix);
+    glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVMatrix.mData);
 
-    //mMVPMatrix->multiply(*mProjectionMatrix, *mMVPMatrix);
-    glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix->mData);
+    mMVPMatrix.multiply(mProjectionMatrix, mMVMatrix);
+    glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix.mData);
 
-    //glDrawArrays(GL_POINTS, 0, 6);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void Skybox::setViewMatrix(Matrix *V)
-{
-    mViewMatrix = V;
-}
-
-void Skybox::setProjectionMatrix(Matrix *P)
-{
-    mProjectionMatrix = P;
 }
 

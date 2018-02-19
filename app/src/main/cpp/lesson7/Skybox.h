@@ -19,19 +19,18 @@ class Skybox{
 public:
     Skybox();
 
-    void initialize(GLuint program);
-    void renderer(GLuint program);
-
-    void setViewMatrix(Matrix* V);
-    void setProjectionMatrix(Matrix* P);
+    void initialize(GLuint mProgramHandle);
+    void renderer();
 
 //private:
 
-    Matrix *mModelMatrix;
-    Matrix *mViewMatrix;
-    Matrix *mProjectionMatrix;
-    Matrix *mMVPMatrix;
-    Matrix *mMVMatrix;
+    GLuint program;
+
+    Matrix mModelMatrix;
+    Matrix mViewMatrix;
+    Matrix mProjectionMatrix;
+    Matrix mMVPMatrix;
+    Matrix mMVMatrix;
 
     GLuint mPositionHandle = 0;
     GLuint mSkyboxHandle = 0;

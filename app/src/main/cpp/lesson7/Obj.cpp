@@ -20,9 +20,8 @@ Obj::Obj()
 {
 }
 
-void Obj::initialize(GLuint program)
+void Obj::initialize(GLuint mProgramHandle)
 {
-
     // (1) Generate buffers
     GLuint buffers[4];
     glGenBuffers(4, buffers);
@@ -57,26 +56,34 @@ void Obj::initialize(GLuint program)
     mCoeffsBufferIdx = buffers[2];
     mIndexBufferIdx = buffers[3];
 
-    mModelMatrix = new Matrix();
-    mMVPMatrix = new Matrix();
-    mMVMatrix = new Matrix();
-    mViewMatrix = new Matrix();
-    mProjectionMatrix = new Matrix();
+    mModelMatrix = Matrix();
+    mModelMatrix.identity();
 
-//    mPositionHandle = (GLuint) glGetUniformLocation(program, "a_Position");
-//    mNormalHandle = (GLuint) glGetUniformLocation(program, "a_Normal");
-//    mCoeffHandle = (GLuint) glGetUniformLocation(program, "a_Coeff");
-//    mMVPMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVPMatrix");
-//    mMVMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVMatrix");
+    //--------- Max Planck's head is rotated, so...
+    mModelMatrix.rotate(-90, 0, 1, 0);
+    mModelMatrix.rotate(-90, 1, 0, 0);
+    //--------------------------------------
 
+    mMVPMatrix = Matrix();
+    mMVMatrix = Matrix();
+    mViewMatrix = Matrix();
+    mProjectionMatrix = Matrix();
+
+    program = mProgramHandle;
 }
 
 
-void Obj::renderer(GLuint program)
+void Obj::renderer()
 {
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glUseProgram(program);
 
-//    LOGD("%d %d %d %d", positions.size()/3, normals.size()/3, coeffs.size()/4, indices.size()/3);
-//    LOGD("%d %d %d", program, mMVMatrixHandle, mMVPMatrixHandle);
+    mMVPMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVPMatrix");
+    mMVMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVMatrix");
+    mPositionHandle = (GLuint) glGetAttribLocation(program, "a_Position");
+    mNormalHandle = (GLuint) glGetAttribLocation(program, "a_Normal");
+    mCoeffHandle = (GLuint) glGetAttribLocation(program, "a_Coeff");
 
     // Pass in the position information
     glBindBuffer(GL_ARRAY_BUFFER, mPositionsBufferIdx);
@@ -94,11 +101,12 @@ void Obj::renderer(GLuint program)
     glVertexAttribPointer(mCoeffHandle, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Pass in matrix information
-    //mMVPMatrix->multiply(*mViewMatrix, *mModelMatrix);
-    glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVMatrix->mData);
+    mModelMatrix.print("?");
+    mMVMatrix.multiply(mViewMatrix, mModelMatrix);
+    glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVMatrix.mData);
 
-    //mMVPMatrix->multiply(*mProjectionMatrix, *mMVPMatrix);
-    glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix->mData);
+    mMVPMatrix.multiply(mProjectionMatrix, mMVMatrix);
+    glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix.mData);
 
 
     // Clear the currently bound buffer (so future OpenGL calls do not use this buffer).
@@ -112,16 +120,6 @@ void Obj::renderer(GLuint program)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-}
-
-void Obj::setViewMatrix(Matrix *V)
-{
-    mViewMatrix = V;
-}
-
-void Obj::setProjectionMatrix(Matrix *P)
-{
-    mProjectionMatrix = P;
 }
 
 vector<float> processLine(string line, int size)

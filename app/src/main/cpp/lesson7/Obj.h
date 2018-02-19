@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <graphics/Matrix.h>
 
+
 using namespace std;
 
 class Obj{
@@ -25,21 +26,17 @@ public:
 
     Obj();
 
-    void initialize(GLuint program);
-    void renderer(GLuint program);
-
-    void setViewMatrix(Matrix* V);
-    void setProjectionMatrix(Matrix* P);
-
+    void initialize(GLuint mProgramHandle);
+    void renderer();
     void parser();
 
-//private:
+    GLuint program;
 
-    Matrix *mModelMatrix;
-    Matrix *mViewMatrix;
-    Matrix *mProjectionMatrix;
-    Matrix *mMVPMatrix;
-    Matrix *mMVMatrix;
+    Matrix mModelMatrix;
+    Matrix mViewMatrix;
+    Matrix mProjectionMatrix;
+    Matrix mMVPMatrix;
+    Matrix mMVMatrix;
 
     GLuint mPositionHandle = 0;
     GLuint mNormalHandle = 0;
