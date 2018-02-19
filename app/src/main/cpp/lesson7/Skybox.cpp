@@ -38,13 +38,14 @@ void Skybox::initialize(GLuint mProgramHandle)
 
     mPositionsBufferIdx = buffers[0];
 
-    //const char * paths[6] = {"texture/right.png", "texture/left.png", "texture/top.png", "texture/bottom.png", "texture/near.png", "texture/far.png"};
-    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
-                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/far.png", "texture/graceCathedral/near.png"};
+    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
+     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
+//    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
+//                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
     mSkyboxBufferIdx = GLUtils::loadCubemap(paths);
 
     // +++++++++++++++++++++
-    GLUtils::getLightCoeff("texture/right.png");
+    //GLUtils::getLightCoeff("texture/right.png");
     // +++++++++++++++++++++
 
     mModelMatrix = Matrix();
@@ -59,6 +60,8 @@ void Skybox::initialize(GLuint mProgramHandle)
 
 void Skybox::renderer()
 {
+    //glBindFramebuffer(GL_FRAMEBUFFER, onscreen_framebuffer);
+
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glUseProgram(program);

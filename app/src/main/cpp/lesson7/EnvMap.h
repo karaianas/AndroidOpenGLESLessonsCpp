@@ -21,10 +21,17 @@ using namespace std;
 
 class EnvMap{
 public:
+    vector<GLubyte> readPixel(int i, int j);
+    void renderToTexture();
+
+    // Extend to rotation later
+    vector<float> getLightCoeff(int order);
     vector<float> getPixel(int i, int j);
     void parser();
 
     int width, height;
+    GLuint FBO;
+    GLubyte* pixels;
     vector<vector<float>> colors;
 };
 #endif //ANDROIDOPENGLESLESSONSCPP_ENVMAP_H

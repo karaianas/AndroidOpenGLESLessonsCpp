@@ -16,9 +16,19 @@ MyDev01::MyDev01()
     skybox = new Skybox();
 
     EnvMap envmap = EnvMap();
-    envmap.parser();
-    envmap.getPixel(0, 0);
-    envmap.getPixel(0, 1);
+    envmap.width = 320;
+    envmap.height = 160;
+    envmap.renderToTexture();
+    envmap.readPixel(0, 0);
+    envmap.readPixel(159, 0);
+    envmap.readPixel(80, 80);
+//    for(int i = 0; i < 4; i++)
+//        envmap.readPixel(i, 0);
+
+
+//    envmap.parser();
+//    envmap.getPixel(0, 0);
+//    envmap.getPixel(0, 1);
 }
 
 MyDev01::~MyDev01()

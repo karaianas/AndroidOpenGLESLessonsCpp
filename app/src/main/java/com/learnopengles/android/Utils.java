@@ -139,27 +139,27 @@ public class Utils {
         return textureHandle[0];
     }
 
-    public Bitmap getLightCoeff(final AssetManager manager, final String path)
+    public float [] getLightCoeff(final AssetManager manager, final String path)
     {
-        InputStream in = null;
-        try {
-            in = manager.open(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+//        InputStream in = null;
+//        try {
+//            in = manager.open(path);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//
+//        BitmapFactory.Options op = new BitmapFactory.Options();
+//        op.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//        Bitmap bmp = BitmapFactory.decodeStream(in, null, op);
+//        return bmp;
 
-        BitmapFactory.Options op = new BitmapFactory.Options();
-        op.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bmp = BitmapFactory.decodeStream(in, null, op);
-        return bmp;
-
-//        int order = 2;
-//        final int size = order * order * 3;
-//        final float[] data = new float[size];
-//        for(int i = 0; i < size; i++)
-//            data[i] = 0.0f;
-//        return data;
+        int order = 2;
+        final int size = order * order * 3;
+        final float[] data = new float[size];
+        for(int i = 0; i < size; i++)
+            data[i] = 0.0f;
+        return data;
 //        //return -1;
     }
 

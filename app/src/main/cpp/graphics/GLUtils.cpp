@@ -147,22 +147,28 @@ GLuint GLUtils:: loadCubemap(const char *path[6])
 void GLUtils::getLightCoeff(const char *path)
 {
 
-//    jclass utilsClass = sEnv->FindClass("com/learnopengles/android/Utils");
-//    if (utilsClass == NULL) {
-//        LOGE("Couldn't find utils class");
-//        return;
-//    }
-//    jmethodID getLightCoeff = sEnv->GetMethodID(utilsClass, "getLightCoeff",
-//                                                    "(Landroid/content/res/AssetManager;Ljava/lang/String;)Landroid/graphics/Bitmap;");
-//    if (getLightCoeff == NULL) {
-//        LOGE("Couldn't find getLightCoeff method");
-//        return;
-//    }
-//
+    jclass utilsClass = sEnv->FindClass("com/learnopengles/android/Utils");
+    if (utilsClass == NULL) {
+        LOGE("Couldn't find utils class");
+        return;
+    }
+    jmethodID getLightCoeff = sEnv->GetMethodID(utilsClass, "getLightCoeff",
+                                                    "(Landroid/content/res/AssetManager;Ljava/lang/String;)[F");
+    if (getLightCoeff == NULL) {
+        LOGE("Couldn't find getLightCoeff method");
+        return;
+    }
+
+//    jfloatArray fArray = (jfloatArray)sEnv->NewFloatArray(12);
+//    jstring pathStr = sEnv->NewStringUTF(path);
+//    sEnv->GetFloatArrayElements(fArray, NULL);
+//    jobject png = sEnv->CallObjectMethod(utilsClass, getLightCoeff, sAssetManager, pathStr);
+
 //    LOGE("ONE");
 //    jstring pathStr = sEnv->NewStringUTF(path);
-////    jint order = 2;
 //    LOGE("TWO");
+//    jfloatArray inArray = ;
+//    sEnv->GetFloatArrayElements(inArray, NULL);//sEnv->CallFloatMethod(utilsClass, getLightCoeff, sAssetManager, pathStr);
 //    jobject png = sEnv->CallObjectMethod(utilsClass, getLightCoeff, sAssetManager, pathStr);
 //    LOGE("THREE");
 ////    sEnv->DeleteLocalRef(pathStr);

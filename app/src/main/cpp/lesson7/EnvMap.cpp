@@ -13,6 +13,48 @@ using namespace std;
 
 vector<float> processMap(string line, int size);
 
+vector<float> EnvMap::getLightCoeff(int order)
+{
+    // Calculate 4 light coeff for now
+    int num = 4;
+    return vector<float, allocator<float>>();
+}
+
+vector<GLubyte> EnvMap::readPixel(int i, int j)
+{
+    int offset = 4 * (i * width + j);
+    vector<GLubyte> rgb;
+    rgb.push_back(pixels[offset]);
+    rgb.push_back(pixels[offset + 1]);
+    rgb.push_back(pixels[offset + 2]);
+    //LOGD("%d %d %d", rgb[0], rgb[1], rgb[2]);
+    return rgb;
+}
+
+void EnvMap::renderToTexture()
+{
+    glGenFramebuffers(1, &FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+    //Create the texture
+    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular_320160.png");
+
+    //Bind the texture to your FBO
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, temp, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+    // Read from frame buffer
+    glViewport(0, 0, width, height);
+    pixels = (GLubyte*) malloc(width * height * sizeof(GLubyte) * 4);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+//    for(int i = 0; i < 12; i++)
+//        LOGD("%d", pixels[i]);
+
+    // Delete framebuffer
+    glDeleteFramebuffers(1, &FBO);
+}
+
 vector<float> EnvMap::getPixel(int i, int j)
 {
     //LOGD("%f %f %f", colors[i * w + j][0], colors[i * w + j][1], colors[i * w + j][2]);

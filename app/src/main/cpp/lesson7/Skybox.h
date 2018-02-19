@@ -40,6 +40,8 @@ public:
     GLuint mPositionsBufferIdx;
     GLuint mSkyboxBufferIdx;
 
+    GLuint offscreen_framebuffer, onscreen_framebuffer;
+
 vector<float> positions{
             // Front face
             -1.0f, 1.0f, 1.0f,
