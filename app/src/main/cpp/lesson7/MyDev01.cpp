@@ -4,6 +4,8 @@
 
 #include "MyDev01.h"
 #include "EnvMap.h"
+using namespace std;
+
 
 MyDev01::MyDev01()
 {
@@ -19,9 +21,10 @@ MyDev01::MyDev01()
     envmap.width = 320;
     envmap.height = 160;
     envmap.renderToTexture();
-    envmap.readPixel(0, 0);
-    envmap.readPixel(159, 0);
-    envmap.readPixel(80, 80);
+//    envmap.readPixel(0, 0);
+//    envmap.readPixel(159, 0);
+//    envmap.readPixel(80, 80);
+    envmap.getLightCoeff(2);
 //    for(int i = 0; i < 4; i++)
 //        envmap.readPixel(i, 0);
 

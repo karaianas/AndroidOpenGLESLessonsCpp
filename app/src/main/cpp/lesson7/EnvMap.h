@@ -26,12 +26,14 @@ public:
 
     // Extend to rotation later
     vector<float> getLightCoeff(int order);
+    void updateCoeff(int i, int j, float x, float y, float z, float domega);
     vector<float> getPixel(int i, int j);
     void parser();
 
     int width, height;
     GLuint FBO;
     GLubyte* pixels;
+    int* image;
     vector<vector<float>> colors;
 };
 #endif //ANDROIDOPENGLESLESSONSCPP_ENVMAP_H

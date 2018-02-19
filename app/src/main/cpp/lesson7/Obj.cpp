@@ -109,7 +109,10 @@ void Obj::renderer()
 
     // Pass in light coefficient information
     //vector<float> lights = {1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-    lights = {.79f, .44f, .54f, .39f, .35f, .60f,-.34f, -.18f, -.27f,-.29f, -.06f, .01f};
+    //lights = {.79f, .44f, .54f, .39f, .35f, .60f,-.34f, -.18f, -.27f,-.29f, -.06f, .01f};
+    lights = {5.096825f, 3.101434f, 3.582081f, -0.887469f, -0.594912f, 0.677349f, 4.180620f, 1.693030f, 3.956042f, -0.595427f, 0.709935f, -0.204993f};
+    for(int i = 0; i < lights.size(); i++)
+        lights[i] *= 0.5f;
     glUniform3fv(mLightHandle, 4, &lights[0]);
 
     //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
