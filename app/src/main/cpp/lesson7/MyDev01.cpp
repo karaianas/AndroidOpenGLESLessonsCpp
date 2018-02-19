@@ -20,6 +20,8 @@ MyDev01::MyDev01()
     EnvMap envmap = EnvMap();
     envmap.width = 320;
     envmap.height = 160;
+//    envmap.width = 512;
+//    envmap.height = 256;
     envmap.renderToTexture();
 //    envmap.readPixel(0, 0);
 //    envmap.readPixel(159, 0);

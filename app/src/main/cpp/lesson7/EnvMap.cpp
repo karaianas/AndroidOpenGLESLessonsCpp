@@ -51,7 +51,7 @@ vector<float> EnvMap::getLightCoeff(int order)
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
             // ???????????
-            domega = (2 * PI / width)*(2 * PI / height)*sinc(theta);
+            domega = (2 * PI / width)*(2 *PI / height)*sinc(theta);
 
             updateCoeff(i, j, x/norm, y/norm, z/norm, domega);
             //updatecoeffs(hdr[i][j], domega, x, y, z); /* Update Integration */
@@ -66,9 +66,9 @@ vector<float> EnvMap::getLightCoeff(int order)
 
 void EnvMap::updateCoeff(int i, int j, float x, float y, float z, float domega)
 {
+    vector<GLubyte> pixel = readPixel(i, j);
     for (int col = 0; col < 3; col++)
     {
-        vector<GLubyte> pixel = readPixel(i, j);
         float c; /* A different constant for each coefficient */
 
         /* L_{00}.  Note that Y_{00} = 0.282095 */
@@ -119,7 +119,9 @@ void EnvMap::renderToTexture()
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     //Create the texture
-    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular_320160.png");
+    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular2_320160.png");
+    //GLuint temp = GLUtils::loadTexture("texture/graceCathedral/equirectangular_512256.png");
+    //GLuint temp = GLUtils::loadTexture("texture/test/equirectangular_320160.png");
 
     //Bind the texture to your FBO
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, temp, 0);

@@ -38,6 +38,7 @@ void Skybox::initialize(GLuint mProgramHandle)
 
     mPositionsBufferIdx = buffers[0];
 
+    // near is back(behind me)
     const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
      "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
 //    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
