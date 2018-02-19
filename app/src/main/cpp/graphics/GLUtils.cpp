@@ -144,6 +144,31 @@ GLuint GLUtils:: loadCubemap(const char *path[6])
 
 }
 
+void GLUtils::getLightCoeff(const char *path)
+{
+
+//    jclass utilsClass = sEnv->FindClass("com/learnopengles/android/Utils");
+//    if (utilsClass == NULL) {
+//        LOGE("Couldn't find utils class");
+//        return;
+//    }
+//    jmethodID getLightCoeff = sEnv->GetMethodID(utilsClass, "getLightCoeff",
+//                                                    "(Landroid/content/res/AssetManager;Ljava/lang/String;)Landroid/graphics/Bitmap;");
+//    if (getLightCoeff == NULL) {
+//        LOGE("Couldn't find getLightCoeff method");
+//        return;
+//    }
+//
+//    LOGE("ONE");
+//    jstring pathStr = sEnv->NewStringUTF(path);
+////    jint order = 2;
+//    LOGE("TWO");
+//    jobject png = sEnv->CallObjectMethod(utilsClass, getLightCoeff, sAssetManager, pathStr);
+//    LOGE("THREE");
+////    sEnv->DeleteLocalRef(pathStr);
+
+}
+
 void GLUtils::setEnvAndAssetManager(JNIEnv *env, jobject assetManager) {
     sEnv = env;
     sAssetManager = assetManager;
@@ -270,3 +295,4 @@ GLfloat *GLUtils::generateCubeData(float *point1,
     }
     return cubeData;
 }
+

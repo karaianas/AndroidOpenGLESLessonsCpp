@@ -60,8 +60,8 @@ void Obj::initialize(GLuint mProgramHandle)
     mModelMatrix.identity();
 
     //--------- Max Planck's head is rotated, so...
-    mModelMatrix.rotate(-90, 0, 1, 0);
-    mModelMatrix.rotate(-90, 1, 0, 0);
+    //mModelMatrix.rotate(-90, 0, 1, 0);
+    //mModelMatrix.rotate(-90, 1, 0, 0);
     //--------------------------------------
 
     mMVPMatrix = Matrix();
@@ -72,7 +72,6 @@ void Obj::initialize(GLuint mProgramHandle)
     program = mProgramHandle;
 }
 
-
 void Obj::renderer()
 {
     glEnable(GL_CULL_FACE);
@@ -81,6 +80,7 @@ void Obj::renderer()
 
     mMVPMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVPMatrix");
     mMVMatrixHandle = (GLuint) glGetUniformLocation(program, "u_MVMatrix");
+    mLightHandle = (GLuint) glGetUniformLocation(program, "u_Light");
     mPositionHandle = (GLuint) glGetAttribLocation(program, "a_Position");
     mNormalHandle = (GLuint) glGetAttribLocation(program, "a_Normal");
     mCoeffHandle = (GLuint) glGetAttribLocation(program, "a_Coeff");
@@ -101,24 +101,28 @@ void Obj::renderer()
     glVertexAttribPointer(mCoeffHandle, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
 
     // Pass in matrix information
-    mModelMatrix.print("?");
     mMVMatrix.multiply(mViewMatrix, mModelMatrix);
     glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVMatrix.mData);
 
     mMVPMatrix.multiply(mProjectionMatrix, mMVMatrix);
     glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix.mData);
 
+    // Pass in light coefficient information
+    //vector<float> lights = {1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
+    lights = {.79f, .44f, .54f, .39f, .35f, .60f,-.34f, -.18f, -.27f,-.29f, -.06f, .01f};
+    glUniform3fv(mLightHandle, 4, &lights[0]);
 
-    // Clear the currently bound buffer (so future OpenGL calls do not use this buffer).
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-//    glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
-
+    //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferIdx);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
+
+void Obj::computeLightCoeff()
+{
 
 }
 
@@ -254,5 +258,6 @@ void Obj::parser()
 
     //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d, %d", indices.size(), fcounter);
 }
+
 
 

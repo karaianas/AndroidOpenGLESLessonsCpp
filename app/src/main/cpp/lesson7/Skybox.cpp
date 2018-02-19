@@ -38,8 +38,14 @@ void Skybox::initialize(GLuint mProgramHandle)
 
     mPositionsBufferIdx = buffers[0];
 
-    const char * paths[6] = {"texture/right.png", "texture/left.png", "texture/top.png", "texture/bottom.png", "texture/near.png", "texture/far.png"};
+    //const char * paths[6] = {"texture/right.png", "texture/left.png", "texture/top.png", "texture/bottom.png", "texture/near.png", "texture/far.png"};
+    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
+                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/far.png", "texture/graceCathedral/near.png"};
     mSkyboxBufferIdx = GLUtils::loadCubemap(paths);
+
+    // +++++++++++++++++++++
+    GLUtils::getLightCoeff("texture/right.png");
+    // +++++++++++++++++++++
 
     mModelMatrix = Matrix();
     mModelMatrix.identity();

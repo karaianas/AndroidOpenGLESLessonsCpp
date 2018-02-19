@@ -28,6 +28,7 @@ public:
 
     void initialize(GLuint mProgramHandle);
     void renderer();
+    void computeLightCoeff();
     void parser();
 
     GLuint program;
@@ -43,6 +44,7 @@ public:
     GLuint mCoeffHandle = 0;
     GLuint mMVPMatrixHandle = 0;
     GLuint mMVMatrixHandle = 0;
+    GLuint mLightHandle = 0;
 
     GLuint mPositionsBufferIdx;
     GLuint mNormalsBufferIdx;
@@ -53,6 +55,7 @@ public:
     vector<float> normals;
     vector<short> indices;
     vector<float> coeffs;
+    vector<float> lights;
 
 public:
 

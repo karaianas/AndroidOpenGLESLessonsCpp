@@ -3,6 +3,7 @@
 //
 
 #include "MyDev01.h"
+#include "EnvMap.h"
 
 MyDev01::MyDev01()
 {
@@ -13,6 +14,11 @@ MyDev01::MyDev01()
     obj = new Obj();
     obj->parser();
     skybox = new Skybox();
+
+    EnvMap envmap = EnvMap();
+    envmap.parser();
+    envmap.getPixel(0, 0);
+    envmap.getPixel(0, 1);
 }
 
 MyDev01::~MyDev01()

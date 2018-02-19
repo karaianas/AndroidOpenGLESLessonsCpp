@@ -31,6 +31,8 @@ public:
 
     static GLuint loadCubemap(const char * name[6]);
 
+    static void getLightCoeff(const char *name);
+
     /**
      * Create a program with the given vertex and framgent
      * shader source code.

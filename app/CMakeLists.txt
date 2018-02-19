@@ -73,6 +73,8 @@ add_library(
                 src/main/cpp/lesson7/Skybox.h
                 src/main/cpp/lesson7/MyDev01.cpp
                 src/main/cpp/lesson7/MyDev01.h
+                src/main/cpp/lesson7/EnvMap.cpp
+                src/main/cpp/lesson7/EnvMap.h
 
 
                 # lesson8
