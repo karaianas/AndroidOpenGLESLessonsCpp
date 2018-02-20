@@ -115,8 +115,10 @@ void Obj::renderer()
 
     // Halved
     lights = {2.46f, 1.27f, 1.11f, 0.05f, -0.053f, 0.41f, 1.95f, 0.25f, 0.57f, 0.45f, 0.30f, -0.34f};
+    // Blood moon
+//    lights = {1.446891f, 0.531626f, 0.532157f,  -0.118592f,-0.049557f, 0.001953f, 0.766567f, 0.275998f, 0.639483f, -0.114568f, -0.060870f, -0.022931f};
 //    for(int i = 0; i < lights.size(); i++)
-//        lights[i] *= 1.0f;
+//        lights[i] *= 1.5f;
     glUniform3fv(mLightHandle, 4, &lights[0]);
 
     //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);

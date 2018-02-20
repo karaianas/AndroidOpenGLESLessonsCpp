@@ -137,6 +137,7 @@ void EnvMap::renderToTexture()
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     //Create the texture
+    //GLuint temp = GLUtils::loadTexture("texture/bloodMoon/equirectangular_1024512.png");
     GLuint temp = GLUtils::loadTexture("texture/test/equirectangular3_320160.png");
     //GLuint temp = GLUtils::loadTexture("texture/graceCathedral/equirectangular_512256.png");
     //GLuint temp = GLUtils::loadTexture("texture/test/equirectangular_320160.png");

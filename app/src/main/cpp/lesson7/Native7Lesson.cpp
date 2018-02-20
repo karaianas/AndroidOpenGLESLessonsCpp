@@ -7,9 +7,7 @@
 #include "GenData.h"
 #include <android/log.h>
 
-//#include "Obj.h"
 #include "MyDev01.h"
-//#include "Skybox.h"
 
 #define LOG_TAG "Lesson"
 #define LOGI(fmt, args...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##args)

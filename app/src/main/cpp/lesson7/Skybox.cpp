@@ -39,6 +39,8 @@ void Skybox::initialize(GLuint mProgramHandle)
     mPositionsBufferIdx = buffers[0];
 
     // near is back(behind me)
+//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
+//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
     const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
                              "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
 //    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
@@ -65,8 +67,8 @@ void Skybox::renderer()
 {
     //glBindFramebuffer(GL_FRAMEBUFFER, onscreen_framebuffer);
 
-    glDisable(GL_CULL_FACE);
-    //glEnable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     //glFrontFace(GL_FRONT);
     glEnable(GL_DEPTH_TEST);
     glUseProgram(program);
