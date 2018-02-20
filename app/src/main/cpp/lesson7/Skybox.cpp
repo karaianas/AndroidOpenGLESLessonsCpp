@@ -39,8 +39,10 @@ void Skybox::initialize(GLuint mProgramHandle)
     mPositionsBufferIdx = buffers[0];
 
     // near is back(behind me)
-    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
-     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
+    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
+                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
+//    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
+//     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
 //    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
 //                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
     mSkyboxBufferIdx = GLUtils::loadCubemap(paths);
@@ -64,6 +66,8 @@ void Skybox::renderer()
     //glBindFramebuffer(GL_FRAMEBUFFER, onscreen_framebuffer);
 
     glDisable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
+    //glFrontFace(GL_FRONT);
     glEnable(GL_DEPTH_TEST);
     glUseProgram(program);
 

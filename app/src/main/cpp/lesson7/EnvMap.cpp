@@ -47,6 +47,9 @@ vector<float> EnvMap::getLightCoeff(int order)
             x = sin(theta)*cos(phi);
             y = sin(theta)*sin(phi);
             z = cos(theta);
+//            x = cos(theta) * cos(phi);
+//            y = sin(theta);
+//            z = cos(theta)
 
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
@@ -119,7 +122,7 @@ void EnvMap::renderToTexture()
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     //Create the texture
-    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular2_320160.png");
+    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular3_320160.png");
     //GLuint temp = GLUtils::loadTexture("texture/graceCathedral/equirectangular_512256.png");
     //GLuint temp = GLUtils::loadTexture("texture/test/equirectangular_320160.png");
 
