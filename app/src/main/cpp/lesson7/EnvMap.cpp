@@ -35,6 +35,11 @@ vector<float> EnvMap::getLightCoeff(int order)
         colors.push_back(temp);
     }
 
+    float mintheta = 0.0f;
+    float minphi = 0.0f;
+    float maxtheta = 0.0f;
+    float maxphi = 0.0f;
+
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++) {
 
@@ -44,6 +49,15 @@ vector<float> EnvMap::getLightCoeff(int order)
             theta = float(i)/float(height) * PI;
             phi = float(j)/float(width) * 2 * PI;
 
+            if(phi > maxphi)
+                maxphi = phi;
+            else if(phi < minphi)
+                minphi = phi;
+
+            if(theta > maxtheta)
+                maxtheta = theta;
+            else if(theta < mintheta)
+                mintheta = theta;
             x = sin(theta)*cos(phi);
             y = sin(theta)*sin(phi);
             z = cos(theta);
@@ -54,7 +68,7 @@ vector<float> EnvMap::getLightCoeff(int order)
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
             // ???????????
-            domega = (2 * PI / width)*(2 *PI / height)*sinc(theta);
+            domega = (2 * PI / width)*(PI / height)*sinc(theta);
 
             updateCoeff(i, j, x/norm, y/norm, z/norm, domega);
             //updatecoeffs(hdr[i][j], domega, x, y, z); /* Update Integration */
@@ -64,6 +78,7 @@ vector<float> EnvMap::getLightCoeff(int order)
     LOGD("%f %f %f", colors[1][0], colors[1][1], colors[1][2]);
     LOGD("%f %f %f", colors[2][0], colors[2][1], colors[2][2]);
     LOGD("%f %f %f", colors[3][0], colors[3][1], colors[3][2]);
+    LOGD("%f %f %f %f", minphi, maxphi, mintheta, maxtheta);
     return vector<float, allocator<float>>();
 }
 
