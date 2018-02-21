@@ -60,8 +60,8 @@ void Obj::initialize(GLuint mProgramHandle)
     mModelMatrix.identity();
 
     //--------- Max Planck's head is rotated, so...
-    //mModelMatrix.rotate(-90, 0, 1, 0);
-    //mModelMatrix.rotate(-90, 1, 0, 0);
+//    mModelMatrix.rotate(180, 0, 1, 0);
+//    mModelMatrix.rotate(-90, 1, 0, 0);
     //--------------------------------------
 
     mMVPMatrix = Matrix();
@@ -108,17 +108,14 @@ void Obj::renderer()
     glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix.mData);
 
     // Pass in light coefficient information
-    //vector<float> lights = {1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-    //lights = {.79f, .44f, .54f, .39f, .35f, .60f,-.34f, -.18f, -.27f,-.29f, -.06f, .01f};
-    // Not halved
-    //lights = {4.92f, 2.54f, 2.22f, 0.09f, -0.10f, 0.82f, 3.90f, 0.50f, 1.13f, 0.89f, 0.59f, -0.67f};
-
-    // Halved
-    lights = {2.46f, 1.27f, 1.11f, 0.05f, -0.053f, 0.41f, 1.95f, 0.25f, 0.57f, 0.45f, 0.30f, -0.34f};
-    // Blood moon
-//    lights = {1.446891f, 0.531626f, 0.532157f,  -0.118592f,-0.049557f, 0.001953f, 0.766567f, 0.275998f, 0.639483f, -0.114568f, -0.060870f, -0.022931f};
+//    // Test cubemap
+//    lights = {2.46f, 1.27f, 1.11f, 0.05f, -0.053f, 0.41f, 1.95f, 0.25f, 0.57f, 0.45f, 0.30f, -0.34f};
+//
+//    // Blood moon cubemap
+//    lights = {1.64f, 0.610f, 0.333f,  -0.202f, -0.056f, 0.25f, 1.15f, 0.42f, 0.194f, 0.024f, 0.0036f, 0.0075f};
 //    for(int i = 0; i < lights.size(); i++)
 //        lights[i] *= 1.5f;
+
     glUniform3fv(mLightHandle, 4, &lights[0]);
 
     //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
@@ -130,10 +127,18 @@ void Obj::renderer()
 
 }
 
-void Obj::computeLightCoeff()
+void Obj::setLightCoeff(vector<vector<float>> lightCoeff)
 {
-
+    lights.clear();
+    lights = vector<float>();
+    for(int i = 0; i < lightCoeff.size(); i++)
+    {
+        lights.push_back(lightCoeff[i][0]);
+        lights.push_back(lightCoeff[i][1]);
+        lights.push_back(lightCoeff[i][2]);
+    }
 }
+
 
 vector<float> processLine(string line, int size)
 {
@@ -183,13 +188,9 @@ vector<short> processLine2(string line, int size)
     return result;
 }
 
-void Obj::parser()
+void Obj::parser(const char* objPath, const char* coeffPath)
 {
-    //string path = "/planeNsphere.";
-    string path = "/maxPlanck.";
-    string modelPath = "models" + path + "model";
-    string coeffPath = "coefficients" + path + "coeff";
-    const char *buffer = GLUtils::openTextFile(modelPath.c_str());
+    const char *buffer = GLUtils::openTextFile(objPath);
 
     int lineCount = 0;
     int vcounter = 0;
@@ -238,7 +239,7 @@ void Obj::parser()
     int order = 2;
     int numCoeff = order * order;
 
-    const char *buffer2 = GLUtils::openTextFile(coeffPath.c_str());
+    const char *buffer2 = GLUtils::openTextFile(coeffPath);
     lineCount = 0;
     for(int i = 0; lineCount < positions.size() / 3; i++)
     {

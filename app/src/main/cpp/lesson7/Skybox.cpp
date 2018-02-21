@@ -37,21 +37,7 @@ void Skybox::initialize(GLuint mProgramHandle)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     mPositionsBufferIdx = buffers[0];
-
-    // near is back(behind me)
-//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
-//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
-    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
-                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
-//    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
-//     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
-//    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
-//                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
     mSkyboxBufferIdx = GLUtils::loadCubemap(paths);
-
-    // +++++++++++++++++++++
-    //GLUtils::getLightCoeff("texture/right.png");
-    // +++++++++++++++++++++
 
     mModelMatrix = Matrix();
     mModelMatrix.identity();
@@ -59,6 +45,11 @@ void Skybox::initialize(GLuint mProgramHandle)
     mMVMatrix = Matrix();
     mViewMatrix = Matrix();
     mProjectionMatrix = Matrix();
+
+    //--------- Max Planck's head is rotated, so...
+//    mModelMatrix.rotate(-90, 0, 1, 0);
+//    mModelMatrix.rotate(-90, 1, 0, 0);
+    //--------------------------------------
 
     program = mProgramHandle;
 }
@@ -96,5 +87,11 @@ void Skybox::renderer()
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Skybox::setSkybox(const char **filePaths)
+{
+    for(int i = 0; i < 6; i++)
+        paths[i] = filePaths[i];
 }
 

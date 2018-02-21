@@ -28,8 +28,8 @@ public:
 
     void initialize(GLuint mProgramHandle);
     void renderer();
-    void computeLightCoeff();
-    void parser();
+    void setLightCoeff(vector<vector<float>> lightCoeff);
+    void parser(const char* objPath, const char* coeffPath);
 
     GLuint program;
 

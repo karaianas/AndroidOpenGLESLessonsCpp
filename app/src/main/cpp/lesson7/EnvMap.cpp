@@ -13,32 +13,34 @@
 
 using namespace std;
 
-vector<float> processMap(string line, int size);
-
 float sinc(float x)
 {
     if (fabs(x) < 1.0e-4) return 1.0;
     else return(sin(x) / x);
 }
 
-vector<float> EnvMap::getLightCoeff(int order)
+vector<vector<float>>* EnvMap::getLightCoeff(int order)
 {
     // Calculate 4 light coeff for now(order of 2)
-    int num = 4;
-    // Need better reset method
+    int num = order * order;
+
+//    colors->clear();
+    delete colors;
+    colors = new vector<vector<float>>();
+
     for(int col = 0; col < num; col++)
     {
         vector<float> temp;
         temp.push_back(0.0f);
         temp.push_back(0.0f);
         temp.push_back(0.0f);
-        colors.push_back(temp);
+        colors->push_back(temp);
     }
 
-    float mintheta = 0.0f;
-    float minphi = 0.0f;
-    float maxtheta = 0.0f;
-    float maxphi = 0.0f;
+//    float mintheta = 0.0f;
+//    float minphi = 0.0f;
+//    float maxtheta = 0.0f;
+//    float maxphi = 0.0f;
 
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++) {
@@ -49,41 +51,39 @@ vector<float> EnvMap::getLightCoeff(int order)
             theta = float(i)/float(height) * PI;
             phi = float(j)/float(width) * 2 * PI;
 
-            if(phi > maxphi)
-                maxphi = phi;
-            else if(phi < minphi)
-                minphi = phi;
+//            if(phi > maxphi)
+//                maxphi = phi;
+//            else if(phi < minphi)
+//                minphi = phi;
+//
+//            if(theta > maxtheta)
+//                maxtheta = theta;
+//            else if(theta < mintheta)
+//                mintheta = theta;
 
-            if(theta > maxtheta)
-                maxtheta = theta;
-            else if(theta < mintheta)
-                mintheta = theta;
             x = sin(theta)*cos(phi);
             y = sin(theta)*sin(phi);
             z = cos(theta);
-//            x = cos(theta) * cos(phi);
-//            y = sin(theta);
-//            z = cos(theta)
 
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
-            // ???????????
             domega = (2 * PI / width)*(PI / height)*sinc(theta);
 
             updateCoeff(i, j, x/norm, y/norm, z/norm, domega);
-            //updatecoeffs(hdr[i][j], domega, x, y, z); /* Update Integration */
         }
 
-    LOGD("%f %f %f", colors[0][0], colors[0][1], colors[0][2]);
-    LOGD("%f %f %f", colors[1][0], colors[1][1], colors[1][2]);
-    LOGD("%f %f %f", colors[2][0], colors[2][1], colors[2][2]);
-    LOGD("%f %f %f", colors[3][0], colors[3][1], colors[3][2]);
-    LOGD("%f %f %f %f", minphi, maxphi, mintheta, maxtheta);
-    return vector<float, allocator<float>>();
+//    LOGD("%f %f %f", colors[0][0], colors[0][1], colors[0][2]);
+//    LOGD("%f %f %f", colors[1][0], colors[1][1], colors[1][2]);
+//    LOGD("%f %f %f", colors[2][0], colors[2][1], colors[2][2]);
+//    LOGD("%f %f %f", colors[3][0], colors[3][1], colors[3][2]);
+//    LOGD("%f %f %f %f", minphi, maxphi, mintheta, maxtheta);
+
+    return colors;
 }
 
 void EnvMap::updateCoeff(int i, int j, float x, float y, float z, float domega)
 {
+    // This is parallelizable
     vector<GLubyte> pixel = readPixel(i, j);
     for (int col = 0; col < 3; col++)
     {
@@ -91,13 +91,13 @@ void EnvMap::updateCoeff(int i, int j, float x, float y, float z, float domega)
 
         /* L_{00}.  Note that Y_{00} = 0.282095 */
         c = 0.282095;
-        colors[0][col] += float(int(pixel[col]))/255.0f * c*domega;
+        colors->at(0)[col] += float(int(pixel[col]))/255.0f * c*domega;
 
         /* L_{1m}. -1 <= m <= 1.  The linear terms */
         c = 0.488603;
-        colors[1][col] += float(int(pixel[col]))/255.0f * (c*y)*domega;   /* Y_{1-1} = 0.488603 y  */
-        colors[2][col] += float(int(pixel[col]))/255.0f * (c*z)*domega;   /* Y_{10}  = 0.488603 z  */
-        colors[3][col] += float(int(pixel[col]))/255.0f * (c*x)*domega;   /* Y_{11}  = 0.488603 x  */
+        colors->at(1)[col] += float(int(pixel[col]))/255.0f * (c*y)*domega;   /* Y_{1-1} = 0.488603 y  */
+        colors->at(2)[col] += float(int(pixel[col]))/255.0f * (c*z)*domega;   /* Y_{10}  = 0.488603 z  */
+        colors->at(3)[col] += float(int(pixel[col]))/255.0f * (c*x)*domega;   /* Y_{11}  = 0.488603 x  */
 
 //        /* The Quadratic terms, L_{2m} -2 <= m <= 2 */
 //
@@ -131,87 +131,27 @@ vector<GLubyte> EnvMap::readPixel(int i, int j)
     return rgb;
 }
 
-void EnvMap::renderToTexture()
+void EnvMap::renderToTexture(const char* path)
 {
     glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     //Create the texture
-    //GLuint temp = GLUtils::loadTexture("texture/bloodMoon/equirectangular_1024512.png");
-    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular3_320160.png");
+    GLuint textureID = GLUtils::loadTexture(path);
+    //GLuint temp = GLUtils::loadTexture("texture/bloodMoon/equirectangular_512256.png");
+//    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular3_320160.png");
     //GLuint temp = GLUtils::loadTexture("texture/graceCathedral/equirectangular_512256.png");
     //GLuint temp = GLUtils::loadTexture("texture/test/equirectangular_320160.png");
 
     //Bind the texture to your FBO
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, temp, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     // Read from frame buffer
     glViewport(0, 0, width, height);
     pixels = (GLubyte*) malloc(width * height * sizeof(GLubyte) * 4);
-    //image = (int*) malloc(width * height * sizeof(GLubyte) * 4);
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
-//    for(int i = 0; i < 12; i++)
-//        LOGD("%d", image[i]);
 
     // Delete framebuffer
     glDeleteFramebuffers(1, &FBO);
-}
-
-vector<float> EnvMap::getPixel(int i, int j)
-{
-    //LOGD("%f %f %f", colors[i * w + j][0], colors[i * w + j][1], colors[i * w + j][2]);
-    return colors[i * width + j];
-}
-
-void EnvMap::parser()
-{
-    string path = "models/image_output.txt";
-    const char *buffer = GLUtils::openTextFile(path.c_str());
-    width = 320;
-    height = 160;
-
-    // Need to change the limit at some point
-    int lineCount = 0;
-    for(int i = 0; lineCount < width * height; i++)
-    {
-        string s;
-        while (buffer[i] != '\n') {
-            if (buffer[i] == '\0')
-                break;
-            s.push_back(buffer[i]);
-            i++;
-        }
-        vector<float> numbers = processMap(s, 3);
-        colors.push_back(numbers);
-        lineCount++;
-    }
-
-    LOGD("%d", (int)colors.size());
-
-}
-
-vector<float> processMap(string line, int size)
-{
-    vector<float> result;
-    if((line[0] <= 57 && line[0] >= 48) || (line[0] == 45))
-    {
-        for(int i = 0; i < line.length(); i++)
-        {
-            string number;
-            while(line[i] != ' ')
-            {
-                number.push_back(line[i]);
-                i++;
-            }
-            result.push_back(stof(number));
-            if(result.size() == size)
-                return result;
-            //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%f", result.back());
-        }
-    }
-
-    // __android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", result.size());
-    return result;
 }

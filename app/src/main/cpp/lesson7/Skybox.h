@@ -21,8 +21,10 @@ public:
 
     void initialize(GLuint mProgramHandle);
     void renderer();
-
+    void setSkybox(const char** filePaths);
 //private:
+
+    const char* paths[6];
 
     GLuint program;
 

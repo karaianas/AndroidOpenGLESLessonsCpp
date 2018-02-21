@@ -3,7 +3,6 @@
 //
 
 #include "MyDev01.h"
-#include "EnvMap.h"
 using namespace std;
 
 
@@ -14,26 +13,55 @@ MyDev01::MyDev01()
     mProjectionMatrix = nullptr;
 
     obj = new Obj();
-    obj->parser();
     skybox = new Skybox();
+    envmap = new EnvMap();
 
-    EnvMap envmap = EnvMap();
-    envmap.width = 320;
-    envmap.height = 160;
-//    envmap.width = 512;
-//    envmap.height = 256;
-    envmap.renderToTexture();
-//    envmap.readPixel(0, 0);
-//    envmap.readPixel(159, 0);
-//    envmap.readPixel(80, 80);
-    envmap.getLightCoeff(2);
-//    for(int i = 0; i < 4; i++)
-//        envmap.readPixel(i, 0);
+    // Environment map specification
+    envmap->width = 512;
+    envmap->height = 256;
+    string envPath = "texture/bloodMoon/equirectangular_512256.png";
+//    string envPath = "texture/test/test/FARequirectangular_320160.png";
+    envmap->renderToTexture(envPath.c_str());
+    int order = 2;
+    vector<vector<float>>* lightCoeff = envmap->getLightCoeff(order);
 
+    // Object specification
+//    string path = "/planeNsphere.";
+    string path = "/maxPlanck.";
+    string modelPath = "models" + path + "model";
+    string coeffPath = "coefficients" + path + "coeff";
+    obj->parser(modelPath.c_str(), coeffPath.c_str());
+    //obj->setLightCoeff(*lightCoeff);
+    obj->lights.clear();
+    obj->lights = vector<float>();
+    for(int i = 0; i < lightCoeff->size(); i++)
+    {
+        obj->lights.push_back(lightCoeff->at(i)[0]);
+        obj->lights.push_back(lightCoeff->at(i)[1]);
+        obj->lights.push_back(lightCoeff->at(i)[2]);
+    }
 
-//    envmap.parser();
-//    envmap.getPixel(0, 0);
-//    envmap.getPixel(0, 1);
+    // Skybox specification
+    // near is back(behind me)
+//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
+//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
+//    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
+//                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
+//    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
+//     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
+//    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
+//                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
+
+    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
+                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
+
+//    const char * paths[6] = {"texture/violentDays/right.png", "texture/violentDays/left.png", "texture/violentDays/top.png",
+//                             "texture/violentDays/bottom.png", "texture/violentDays/near.png", "texture/violentDays/far.png"};
+
+//    const char * paths[6] = {"texture/test/test/blackbox.png", "texture/test/test/blackbox.png", "texture/test/test/blackbox.png",
+//                             "texture/test/test/blackbox.png", "texture/test/test/blackbox.png", "texture/test/test/color.png"};
+
+    skybox->setSkybox(paths);
 }
 
 MyDev01::~MyDev01()

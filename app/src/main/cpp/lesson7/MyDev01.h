@@ -19,6 +19,8 @@
 #include <iostream>
 #include <string>
 
+#include "EnvMap.h"
+
 #define LOG_TAG "MyDev01"
 #define LOGI(fmt, args...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##args)
 #define LOGD(fmt, args...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, fmt, ##args)
@@ -47,6 +49,7 @@ public:
 
     Obj* obj;
     Skybox* skybox;
+    EnvMap* envmap;
 
     // model/view/projection matrix
     Matrix *mModelMatrix;

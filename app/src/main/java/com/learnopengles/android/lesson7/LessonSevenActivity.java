@@ -79,6 +79,7 @@ public class LessonSevenActivity extends Activity {
             @Override
             public void onClick(View v) {
                 toggleStride();
+                //toggleScene();
             }
         });
     }
