@@ -40,6 +40,7 @@ MyDev01::MyDev01()
         obj->lights.push_back(lightCoeff->at(i)[1]);
         obj->lights.push_back(lightCoeff->at(i)[2]);
     }
+    //obj->setRotation(0, 0, 0);
 
     // Skybox specification
     // near is back(behind me)
@@ -87,7 +88,7 @@ void MyDev01::create()
     // Position the eye in front of the origin.
     float eyeX = 0.0f;
     float eyeY = 0.0f;
-    float eyeZ = 5.0f;
+    float eyeZ = 7.0f;
 
     // We are looking at the origin
     float centerX = 0.0f;
@@ -174,7 +175,8 @@ void MyDev01::draw()
     // Translate the cube into the screen.
     //mModelMatrix->identity();
     //mModelMatrix->translate(0.0f, 0.0f, -3.5f);
-    //mModelMatrix->rotate(angleInDegrees, 1, 1, 1);
+    obj->mModelMatrix.rotate(1, 0, 1, 0);
+    obj->setRotation(0, 0.017f, 0);
 
     // Touch rotation
     mCurrentRotationMatrix->identity();

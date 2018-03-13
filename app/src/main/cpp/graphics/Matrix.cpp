@@ -32,6 +32,10 @@ Matrix::Matrix(const Matrix &src) {
     loadWith(src);
 }
 
+void Matrix::setValue(int i, int j, float value) {
+
+}
+
 void Matrix::print(const char *label) {
     LOGI("%c", *label);
     for (int i = 0; i < 4; i++) {
@@ -348,3 +352,5 @@ void Matrix::multiplyMV(float *r, const float *lhs, const float *rhs) {
 float Matrix::length(float x, float y, float z) {
     return (float) sqrt(x * x + y * y + z * z);
 }
+
+

@@ -28,6 +28,7 @@ public:
 
     void initialize(GLuint mProgramHandle);
     void renderer();
+    void setRotation(float alpha, float beta, float gamma);
     void setLightCoeff(vector<vector<float>> lightCoeff);
     void parser(const char* objPath, const char* coeffPath);
 

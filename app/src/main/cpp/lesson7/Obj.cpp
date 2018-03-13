@@ -127,6 +127,52 @@ void Obj::renderer()
 
 }
 
+void Obj::setRotation(float alpha, float beta, float gamma)
+{
+    float ca = cos(alpha);
+    float sa = sin(alpha);
+    float cb = cos(beta);
+    float sb = sin(beta);
+    float cr = cos(gamma);
+    float sr = sin(gamma);
+
+    Matrix rotationMatrix = Matrix();
+    rotationMatrix.identity();
+
+    rotationMatrix.mData[5] = ca * cr - sa * sr * cb;
+    rotationMatrix.mData[6] = sr * sb;
+    rotationMatrix.mData[7]  = -ca * sr * cb - sa * cr;
+
+    rotationMatrix.mData[9] = sa * sb;
+    rotationMatrix.mData[10] = cb;
+    rotationMatrix.mData[11] = ca * sb;
+
+    rotationMatrix.mData[13] = ca * sr + sa * cr * cb;
+    rotationMatrix.mData[14] = -cr * sb;
+    rotationMatrix.mData[15] = ca * cr * cb - sa * sr;
+
+    //mModelMatrix.multiply(mModelMatrix, rotationMatrix);
+    const float coeff[4] = {lights[0], lights[3], lights[6], lights[9]};
+    float result[4];
+    rotationMatrix.multiplyVector(result, rotationMatrix, coeff);
+    for(int i = 0; i < 4; i++)
+        lights[i * 3] = result[i];
+
+    const float coeff2[4] = {lights[1], lights[4], lights[7], lights[10]};
+    float result2[4];
+    rotationMatrix.multiplyVector(result2, rotationMatrix, coeff2);
+    for(int i = 0; i < 4; i++)
+        lights[i*3 + 1] = result2[i];
+
+    const float coeff3[4] = {lights[2], lights[5], lights[8], lights[11]};
+    float result3[4];
+    rotationMatrix.multiplyVector(result3, rotationMatrix, coeff3);
+    for(int i = 0; i < 4; i++)
+        lights[i*3 + 2] = result3[i];
+
+    //LOGD("%f %f", result[0], result[1]);
+}
+
 void Obj::setLightCoeff(vector<vector<float>> lightCoeff)
 {
     lights.clear();
@@ -268,6 +314,7 @@ void Obj::parser(const char* objPath, const char* coeffPath)
 
     //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d, %d", indices.size(), fcounter);
 }
+
 
 
 

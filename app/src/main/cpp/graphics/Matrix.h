@@ -25,6 +25,8 @@ public:
 
     Matrix(const Matrix &src);
 
+    void setValue(int i, int j, float value);
+
     // Returns true if the two matrices have the same values.
     bool equals(const Matrix &src);
 
