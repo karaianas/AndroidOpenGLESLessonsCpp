@@ -19,7 +19,7 @@ MyDev01::MyDev01()
     // Environment map specification
     envmap->width = 512;
     envmap->height = 256;
-    string envPath = "texture/bloodMoon/equirectangular_512256.png";
+    string envPath = "texture/test/equirectangular_512256.png";
 //    string envPath = "texture/test/test/FARequirectangular_320160.png";
     envmap->renderToTexture(envPath.c_str());
     int order = 2;
@@ -48,13 +48,13 @@ MyDev01::MyDev01()
 //                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
 //    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
 //                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
-//    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
-//     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
+    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
+     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
 //    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
 //                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
 
-    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
-                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
+//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
+//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
 
 //    const char * paths[6] = {"texture/violentDays/right.png", "texture/violentDays/left.png", "texture/violentDays/top.png",
 //                             "texture/violentDays/bottom.png", "texture/violentDays/near.png", "texture/violentDays/far.png"};
@@ -175,8 +175,9 @@ void MyDev01::draw()
     // Translate the cube into the screen.
     //mModelMatrix->identity();
     //mModelMatrix->translate(0.0f, 0.0f, -3.5f);
-    obj->mModelMatrix.rotate(1, 0, 1, 0);
-    obj->setRotation(0, 0.017f, 0);
+    //obj->mModelMatrix.rotate(1, 0, 1, 0);
+    //skybox->mModelMatrix.rotate(1, 0, 1, 0);
+    //obj->setRotation(0, -0.0174f, 0.0f);
 
     // Touch rotation
     mCurrentRotationMatrix->identity();

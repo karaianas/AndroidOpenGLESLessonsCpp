@@ -61,9 +61,14 @@ vector<vector<float>>* EnvMap::getLightCoeff(int order)
 //            else if(theta < mintheta)
 //                mintheta = theta;
 
-            x = sin(theta)*cos(phi);
-            y = sin(theta)*sin(phi);
-            z = cos(theta);
+//            x = sin(theta)*cos(phi);
+//            y = sin(theta)*sin(phi);
+//            z = cos(theta);
+
+
+            x = sin(theta) * sin(phi);
+            y = cos(theta);
+            z = sin(theta) * cos(phi);
 
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
@@ -85,6 +90,9 @@ void EnvMap::updateCoeff(int i, int j, float x, float y, float z, float domega)
 {
     // This is parallelizable
     vector<GLubyte> pixel = readPixel(i, j);
+    if(i == 128 && j == 0)
+        LOGD("%f %f %f", x, y, z);
+        //LOGD("%f %f %f", float(int(pixel[0])),  float(int(pixel[1])),  float(int(pixel[2])));
     for (int col = 0; col < 3; col++)
     {
         float c; /* A different constant for each coefficient */
