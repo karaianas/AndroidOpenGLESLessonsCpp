@@ -54,7 +54,7 @@ void Native7Lesson::change(int width, int height) {
 void Native7Lesson::draw()
 {
     mydev01->draw();
-
+    updateFPS(10.0f);
 }
 
 void Native7Lesson::decreaseCubeCount() {

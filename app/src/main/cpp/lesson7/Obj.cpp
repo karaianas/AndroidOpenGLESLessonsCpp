@@ -160,8 +160,6 @@ void Obj::setRotation(float alpha, float beta, float gamma)
     rotationMatrix.multiplyVector(result3, rotationMatrix, coeff3);
     for(int i = 0; i < 4; i++)
         lights[i*3 + 2] = result3[i];
-
-    LOGD("%f %f", result[0], result[1]);
 }
 
 vector<float> processLine(string line, int size)
@@ -234,7 +232,7 @@ void Obj::parser(const char* objPath, const char* coeffPath)
         if(numbers.size() == 6)
         {
             //float len = sqrt(numbers[0]*numbers[0] + numbers[1]*numbers[1] + numbers[2]*numbers[2]);
-            float scaleFactor = 0.1f;
+            float scaleFactor = 1.0f;//0.1f for max
             positions.push_back(numbers[0] * scaleFactor);// / len);
             positions.push_back(numbers[1] * scaleFactor);// / len);
             positions.push_back(numbers[2] * scaleFactor);// / len);

@@ -16,8 +16,8 @@ MyDev01::MyDev01()
     envmap = new EnvMap();
 
     // Object specification
-    //string path = "/planeNsphere.";
-    string path = "/maxPlanck.";
+    string path = "/planeNsphere.";
+    //string path = "/maxPlanck.";
     string modelPath = "models" + path + "model";
     string coeffPath = "coefficients" + path + "coeff";
     obj->parser(modelPath.c_str(), coeffPath.c_str());
@@ -71,9 +71,9 @@ void MyDev01::create()
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Position the eye in front of the origin.
-    float eyeX = 0.0f;
+    float eyeX = 5.0f;
     float eyeY = 0.0f;
-    float eyeZ = 7.0f;
+    float eyeZ = -5.0f;
 
     // We are looking at the origin
     float centerX = 0.0f;
@@ -125,6 +125,9 @@ void MyDev01::create()
 
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
+
+    //obj->mModelMatrix.rotateLocal(-90, 0, 1, 0);
+    //obj->mModelMatrix.rotateLocal(-90, 0, 0, 1);
 }
 
 void MyDev01::change(int width, int height)
@@ -160,13 +163,13 @@ void MyDev01::draw()
     // Translate the cube into the screen.
     //mModelMatrix->identity();
     //mModelMatrix->translate(0.0f, 0.0f, -3.5f);
-//    obj->mModelMatrix.rotate(90, 0, 1, 0);
-//    obj->mModelMatrix.rotate(90, 1, 0, 0);
+    //obj->mModelMatrix.rotate(90, 0, 1, 0);
+    //obj->mModelMatrix.rotate(90, 1, 0, 0);
     //skybox->mModelMatrix.rotate(1, 0, 0, 1);
     //obj->setRotation(0.0174f, 0.0f, -0.0174f);
 
-    obj->mModelMatrix.rotateLocal(1, 0, 1, 0);
-    envmap->updateLightCoeff(obj->mModelMatrix);
+    //obj->mModelMatrix.rotateLocal(1, 0, 1, 0);
+    //envmap->updateLightCoeff(obj->mModelMatrix);
 
     // Touch rotation
     mCurrentRotationMatrix->identity();
@@ -177,10 +180,17 @@ void MyDev01::draw()
     mAccumulatedRotationMatrix->multiply(*mCurrentRotationMatrix, *mAccumulatedRotationMatrix);
 
     // Set object and skybox V and P
-    obj->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
+    //obj->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
+    obj->mModelMatrix = *mAccumulatedRotationMatrix;
+    obj->mViewMatrix = *mViewMatrix;
     obj->mProjectionMatrix = *mProjectionMatrix;
+    envmap->updateLightCoeff(obj->mModelMatrix);
 
-    skybox->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
+    //skybox->mModelMatrix = *mAccumulatedRotationMatrix;
+    //envmap->updateLightCoeff(skybox->mModelMatrix);
+
+    //skybox->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
+    skybox->mViewMatrix = *mViewMatrix;
     skybox->mProjectionMatrix = *mProjectionMatrix;
 
     skybox->renderer();
@@ -191,6 +201,8 @@ void MyDev01::draw()
 //    float currentDeltaTime = CLOCKS_PER_SEC/(deltaTime);
 //    if(abs(int(lastDeltaTime) - int(currentDeltaTime)) > 1)
 //        updateFPS(currentDeltaTime);
+//    updateFPS(10.0f);
+
 }
 
 void MyDev01::setDelta(float x, float y)
