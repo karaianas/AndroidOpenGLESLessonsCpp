@@ -23,6 +23,8 @@ MyDev01::MyDev01()
     obj->parser(modelPath.c_str(), coeffPath.c_str());
 
     // Environment map specification
+//    string envPath = "texture/test/equirectangular3_320160.png";
+//    envmap->renderToTexture(320, 160, envPath.c_str());
     string envPath = "texture/test/equirectangular3_8040.png";
     envmap->renderToTexture(80, 40, envPath.c_str());
     envmap->obj = obj;

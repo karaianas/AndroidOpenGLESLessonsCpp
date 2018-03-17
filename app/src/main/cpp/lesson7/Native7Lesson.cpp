@@ -30,7 +30,7 @@ MyDev01* mydev01;
 Native7Lesson::Native7Lesson() {
 
     mydev01 = new MyDev01();
-
+    previousTime = 0.0f;
 }
 
 Native7Lesson::~Native7Lesson() {
@@ -53,8 +53,17 @@ void Native7Lesson::change(int width, int height) {
 
 void Native7Lesson::draw()
 {
+    float start = clock();
     mydev01->draw();
-    updateFPS(10.0f);
+    float elapsed = clock() - start;
+    float fps = CLOCKS_PER_SEC/elapsed;
+    if(abs(fps - previousTime) > 10.0f)
+    {
+        updateFPS(fps);
+        previousTime = fps;
+    }
+//    else
+//        updateFPS(previousTime);
 }
 
 void Native7Lesson::decreaseCubeCount() {
@@ -115,7 +124,7 @@ void Native7Lesson::updateStrideStatus(bool useStride) {
 // ++++++++++++++++++++++++
 void Native7Lesson::updateFPS(float fps)
 {
-    LOGD("FPS %2.2f", fps);
+    LOGD("FPS %3.2f", fps);
     Context *pctx = &g_ctx;
     JavaVM *javaVM = pctx->javaVM;
     JNIEnv *env;

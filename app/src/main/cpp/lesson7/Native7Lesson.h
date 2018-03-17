@@ -82,6 +82,8 @@ private:
 
     float mDeltaX;
     float mDeltaY;
+
+    float previousTime;
 };
 
 

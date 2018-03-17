@@ -173,7 +173,7 @@ public class LessonSevenActivity extends Activity {
             public void run() {
 
 
-                ((TextView) findViewById(R.id.textViewFPS)).setText(String.format("%2.2f FPS", fps));
+                ((TextView) findViewById(R.id.textViewFPS)).setText(String.format("%3.2f FPS", fps));
 
             }
         });
