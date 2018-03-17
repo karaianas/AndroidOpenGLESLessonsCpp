@@ -45,6 +45,8 @@ public:
     // Rotates this matrix the given angle.
     void rotate(float radians, float x, float y, float z);
 
+    void rotateLocal(float radians, float x, float y, float z);
+
     // Sets this matrix to be the result of multiplying the given matrices.
     void multiply(const Matrix &l, const Matrix &r);
 

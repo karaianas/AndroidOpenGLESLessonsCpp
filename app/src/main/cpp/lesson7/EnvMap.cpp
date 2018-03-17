@@ -37,11 +37,6 @@ vector<vector<float>>* EnvMap::getLightCoeff(int order)
         colors->push_back(temp);
     }
 
-//    float mintheta = 0.0f;
-//    float minphi = 0.0f;
-//    float maxtheta = 0.0f;
-//    float maxphi = 0.0f;
-
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++) {
 
@@ -51,24 +46,17 @@ vector<vector<float>>* EnvMap::getLightCoeff(int order)
             theta = float(i)/float(height) * PI;
             phi = float(j)/float(width) * 2 * PI;
 
-//            if(phi > maxphi)
-//                maxphi = phi;
-//            else if(phi < minphi)
-//                minphi = phi;
-//
-//            if(theta > maxtheta)
-//                maxtheta = theta;
-//            else if(theta < mintheta)
-//                mintheta = theta;
+            x = sin(theta)*cos(phi);
+            y = sin(theta)*sin(phi);
+            z = cos(theta);
 
-//            x = sin(theta)*cos(phi);
-//            y = sin(theta)*sin(phi);
-//            z = cos(theta);
+            float temp = y;
+            y = -z;
+            z = temp;
 
-
-            x = sin(theta) * sin(phi);
-            y = cos(theta);
-            z = sin(theta) * cos(phi);
+//            x = sin(theta) * sin(phi);
+//            y = cos(theta);
+//            z = sin(theta) * cos(phi);
 
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
@@ -86,13 +74,58 @@ vector<vector<float>>* EnvMap::getLightCoeff(int order)
     return colors;
 }
 
+vector<vector<float>> *EnvMap::getLightCoeff2(int order, Matrix R)
+{
+    // Calculate 4 light coeff for now(order of 2)
+    int num = order * order;
+
+//    colors->clear();
+    delete colors;
+    colors = new vector<vector<float>>();
+
+    for(int col = 0; col < num; col++)
+    {
+        vector<float> temp;
+        temp.push_back(0.0f);
+        temp.push_back(0.0f);
+        temp.push_back(0.0f);
+        colors->push_back(temp);
+    }
+
+    for (int i = 0; i < height; i++)
+        for (int j = 0; j < width; j++) {
+
+            float theta, phi, x, y, z, domega;
+            theta = float(i)/float(height) * PI;
+            phi = float(j)/float(width) * 2 * PI;
+
+            x = sin(theta)*cos(phi);
+            y = sin(theta)*sin(phi);
+            z = cos(theta);
+
+            const float temp[4] = {x, y, z, 1.0f};
+            float result[4];
+            R.multiplyVector(result, R, temp);
+            x = result[0];
+            y = result[1];
+            z = result[2];
+
+            float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
+
+            domega = (2 * PI / width)*(PI / height)*sinc(theta);
+
+            updateCoeff(i, j, x/norm, y/norm, z/norm, domega);
+        }
+
+    return colors;
+}
+
+
 void EnvMap::updateCoeff(int i, int j, float x, float y, float z, float domega)
 {
     // This is parallelizable
     vector<GLubyte> pixel = readPixel(i, j);
-    if(i == 128 && j == 0)
-        LOGD("%f %f %f", x, y, z);
-        //LOGD("%f %f %f", float(int(pixel[0])),  float(int(pixel[1])),  float(int(pixel[2])));
+
     for (int col = 0; col < 3; col++)
     {
         float c; /* A different constant for each coefficient */
@@ -163,3 +196,4 @@ void EnvMap::renderToTexture(const char* path)
     // Delete framebuffer
     glDeleteFramebuffers(1, &FBO);
 }
+

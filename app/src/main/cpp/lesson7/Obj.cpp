@@ -170,7 +170,7 @@ void Obj::setRotation(float alpha, float beta, float gamma)
     for(int i = 0; i < 4; i++)
         lights[i*3 + 2] = result3[i];
 
-    //LOGD("%f %f", result[0], result[1]);
+    LOGD("%f %f", result[0], result[1]);
 }
 
 void Obj::setLightCoeff(vector<vector<float>> lightCoeff)

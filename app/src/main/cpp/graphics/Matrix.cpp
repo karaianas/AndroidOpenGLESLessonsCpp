@@ -111,6 +111,16 @@ void Matrix::rotate(float radians, float x, float y, float z) {
     delete temp;
 }
 
+void Matrix::rotateLocal(float radians, float x, float y, float z) {
+    Matrix *m = newRotate(radians, x, y, z);
+    Matrix *temp = new Matrix(*this);
+    if (m != NULL && temp != NULL) {
+        multiply(*m, *temp);
+    }
+    delete m;
+    delete temp;
+}
+
 void Matrix::multiply(const Matrix &l, const Matrix &r) {
     float const *const lhs = l.mData;
     float const *const rhs = r.mData;

@@ -17,9 +17,9 @@ MyDev01::MyDev01()
     envmap = new EnvMap();
 
     // Environment map specification
-    envmap->width = 512;
-    envmap->height = 256;
-    string envPath = "texture/test/equirectangular_512256.png";
+    envmap->width = 80;
+    envmap->height = 40;
+    string envPath = "texture/test/equirectangular3_8040.png";
 //    string envPath = "texture/test/test/FARequirectangular_320160.png";
     envmap->renderToTexture(envPath.c_str());
     int order = 2;
@@ -63,6 +63,10 @@ MyDev01::MyDev01()
 //                             "texture/test/test/blackbox.png", "texture/test/test/blackbox.png", "texture/test/test/color.png"};
 
     skybox->setSkybox(paths);
+
+
+
+
 }
 
 MyDev01::~MyDev01()
@@ -138,8 +142,23 @@ void MyDev01::create()
     mAccumulatedRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix->identity();
 
+//    obj->mModelMatrix.rotateLocal(90, 0, 1, 0);
+//    obj->mModelMatrix.rotateLocal(90, 1, 0, 0);
+//    obj->mModelMatrix.rotateLocal(90, 0, 0, 1);
+
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
+
+    // Second pass
+//    vector<vector<float>>* lightCoeff2 = envmap->getLightCoeff2(2, obj->mModelMatrix);
+//    obj->lights.clear();
+//    obj->lights = vector<float>();
+//    for(int i = 0; i < lightCoeff2->size(); i++)
+//    {
+//        obj->lights.push_back(lightCoeff2->at(i)[0]);
+//        obj->lights.push_back(lightCoeff2->at(i)[1]);
+//        obj->lights.push_back(lightCoeff2->at(i)[2]);
+//    }
 }
 
 void MyDev01::change(int width, int height)
@@ -175,9 +194,20 @@ void MyDev01::draw()
     // Translate the cube into the screen.
     //mModelMatrix->identity();
     //mModelMatrix->translate(0.0f, 0.0f, -3.5f);
-    //obj->mModelMatrix.rotate(1, 0, 1, 0);
-    //skybox->mModelMatrix.rotate(1, 0, 1, 0);
-    //obj->setRotation(0, -0.0174f, 0.0f);
+//    obj->mModelMatrix.rotate(90, 0, 1, 0);
+//    obj->mModelMatrix.rotate(90, 1, 0, 0);
+    //skybox->mModelMatrix.rotate(1, 0, 0, 1);
+    //obj->setRotation(0.0174f, 0.0f, -0.0174f);
+    obj->mModelMatrix.rotateLocal(1, 0, 1, 0);
+    vector<vector<float>>* lightCoeff2 = envmap->getLightCoeff2(2, obj->mModelMatrix);
+    obj->lights.clear();
+    obj->lights = vector<float>();
+    for(int i = 0; i < lightCoeff2->size(); i++)
+    {
+        obj->lights.push_back(lightCoeff2->at(i)[0]);
+        obj->lights.push_back(lightCoeff2->at(i)[1]);
+        obj->lights.push_back(lightCoeff2->at(i)[2]);
+    }
 
     // Touch rotation
     mCurrentRotationMatrix->identity();

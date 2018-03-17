@@ -26,6 +26,7 @@ public:
 
     // Extend to rotation later
     vector<vector<float>>* getLightCoeff(int order);
+    vector<vector<float>>* getLightCoeff2(int order, Matrix R);
     void updateCoeff(int i, int j, float x, float y, float z, float domega);
 
     int width, height;
