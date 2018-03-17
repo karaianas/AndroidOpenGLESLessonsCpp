@@ -5,7 +5,6 @@
 #include "MyDev01.h"
 using namespace std;
 
-
 MyDev01::MyDev01()
 {
     mViewMatrix = nullptr;
@@ -16,57 +15,39 @@ MyDev01::MyDev01()
     skybox = new Skybox();
     envmap = new EnvMap();
 
-    // Environment map specification
-    envmap->width = 80;
-    envmap->height = 40;
-    string envPath = "texture/test/equirectangular3_8040.png";
-//    string envPath = "texture/test/test/FARequirectangular_320160.png";
-    envmap->renderToTexture(envPath.c_str());
-    int order = 2;
-    vector<vector<float>>* lightCoeff = envmap->getLightCoeff(order);
-
     // Object specification
-//    string path = "/planeNsphere.";
+    //string path = "/planeNsphere.";
     string path = "/maxPlanck.";
     string modelPath = "models" + path + "model";
     string coeffPath = "coefficients" + path + "coeff";
     obj->parser(modelPath.c_str(), coeffPath.c_str());
-    //obj->setLightCoeff(*lightCoeff);
-    obj->lights.clear();
-    obj->lights = vector<float>();
-    for(int i = 0; i < lightCoeff->size(); i++)
-    {
-        obj->lights.push_back(lightCoeff->at(i)[0]);
-        obj->lights.push_back(lightCoeff->at(i)[1]);
-        obj->lights.push_back(lightCoeff->at(i)[2]);
-    }
-    //obj->setRotation(0, 0, 0);
+
+    // Environment map specification
+    string envPath = "texture/test/equirectangular3_8040.png";
+    envmap->renderToTexture(80, 40, envPath.c_str());
+    envmap->obj = obj;
+    int order = 2;
+
+    envmap->setLightCoeff(order);
 
     // Skybox specification
-    // near is back(behind me)
 //    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
 //                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
+
 //    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
 //                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
+
     const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
      "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
+
 //    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
 //                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
 
 //    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
 //                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
 
-//    const char * paths[6] = {"texture/violentDays/right.png", "texture/violentDays/left.png", "texture/violentDays/top.png",
-//                             "texture/violentDays/bottom.png", "texture/violentDays/near.png", "texture/violentDays/far.png"};
-
-//    const char * paths[6] = {"texture/test/test/blackbox.png", "texture/test/test/blackbox.png", "texture/test/test/blackbox.png",
-//                             "texture/test/test/blackbox.png", "texture/test/test/blackbox.png", "texture/test/test/color.png"};
 
     skybox->setSkybox(paths);
-
-
-
-
 }
 
 MyDev01::~MyDev01()
@@ -142,23 +123,8 @@ void MyDev01::create()
     mAccumulatedRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix->identity();
 
-//    obj->mModelMatrix.rotateLocal(90, 0, 1, 0);
-//    obj->mModelMatrix.rotateLocal(90, 1, 0, 0);
-//    obj->mModelMatrix.rotateLocal(90, 0, 0, 1);
-
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
-
-    // Second pass
-//    vector<vector<float>>* lightCoeff2 = envmap->getLightCoeff2(2, obj->mModelMatrix);
-//    obj->lights.clear();
-//    obj->lights = vector<float>();
-//    for(int i = 0; i < lightCoeff2->size(); i++)
-//    {
-//        obj->lights.push_back(lightCoeff2->at(i)[0]);
-//        obj->lights.push_back(lightCoeff2->at(i)[1]);
-//        obj->lights.push_back(lightCoeff2->at(i)[2]);
-//    }
 }
 
 void MyDev01::change(int width, int height)
@@ -198,16 +164,9 @@ void MyDev01::draw()
 //    obj->mModelMatrix.rotate(90, 1, 0, 0);
     //skybox->mModelMatrix.rotate(1, 0, 0, 1);
     //obj->setRotation(0.0174f, 0.0f, -0.0174f);
+
     obj->mModelMatrix.rotateLocal(1, 0, 1, 0);
-    vector<vector<float>>* lightCoeff2 = envmap->getLightCoeff2(2, obj->mModelMatrix);
-    obj->lights.clear();
-    obj->lights = vector<float>();
-    for(int i = 0; i < lightCoeff2->size(); i++)
-    {
-        obj->lights.push_back(lightCoeff2->at(i)[0]);
-        obj->lights.push_back(lightCoeff2->at(i)[1]);
-        obj->lights.push_back(lightCoeff2->at(i)[2]);
-    }
+    envmap->updateLightCoeff(obj->mModelMatrix);
 
     // Touch rotation
     mCurrentRotationMatrix->identity();

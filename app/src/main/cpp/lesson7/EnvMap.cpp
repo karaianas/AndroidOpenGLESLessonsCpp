@@ -19,12 +19,10 @@ float sinc(float x)
     else return(sin(x) / x);
 }
 
-vector<vector<float>>* EnvMap::getLightCoeff(int order)
+void EnvMap::setLightCoeff(int order)
 {
-    // Calculate 4 light coeff for now(order of 2)
     int num = order * order;
 
-//    colors->clear();
     delete colors;
     colors = new vector<vector<float>>();
 
@@ -38,8 +36,8 @@ vector<vector<float>>* EnvMap::getLightCoeff(int order)
     }
 
     for (int i = 0; i < height; i++)
-        for (int j = 0; j < width; j++) {
-
+        for (int j = 0; j < width; j++)
+        {
             /* We now find the cartesian components for the point (i,j) */
             float theta, phi, x, y, z, domega;
 
@@ -50,50 +48,35 @@ vector<vector<float>>* EnvMap::getLightCoeff(int order)
             y = sin(theta)*sin(phi);
             z = cos(theta);
 
-            float temp = y;
-            y = -z;
-            z = temp;
-
-//            x = sin(theta) * sin(phi);
-//            y = cos(theta);
-//            z = sin(theta) * cos(phi);
-
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
             domega = (2 * PI / width)*(PI / height)*sinc(theta);
 
-            updateCoeff(i, j, x/norm, y/norm, z/norm, domega);
+            updateValue(i, j, x/norm, y/norm, z/norm, domega);
         }
 
-//    LOGD("%f %f %f", colors[0][0], colors[0][1], colors[0][2]);
-//    LOGD("%f %f %f", colors[1][0], colors[1][1], colors[1][2]);
-//    LOGD("%f %f %f", colors[2][0], colors[2][1], colors[2][2]);
-//    LOGD("%f %f %f", colors[3][0], colors[3][1], colors[3][2]);
-//    LOGD("%f %f %f %f", minphi, maxphi, mintheta, maxtheta);
-
-    return colors;
+    obj->lights.clear();
+    obj->lights = vector<float>();
+    for(int i = 0; i < colors->size(); i++)
+    {
+        obj->lights.push_back(colors->at(i)[0]);
+        obj->lights.push_back(colors->at(i)[1]);
+        obj->lights.push_back(colors->at(i)[2]);
+    }
 }
 
-vector<vector<float>> *EnvMap::getLightCoeff2(int order, Matrix R)
+void EnvMap::updateLightCoeff(Matrix& R)
 {
-    // Calculate 4 light coeff for now(order of 2)
-    int num = order * order;
-
-//    colors->clear();
-    delete colors;
-    colors = new vector<vector<float>>();
-
-    for(int col = 0; col < num; col++)
+    for(int i = 0; i < colors->size(); i++)
     {
-        vector<float> temp;
-        temp.push_back(0.0f);
-        temp.push_back(0.0f);
-        temp.push_back(0.0f);
-        colors->push_back(temp);
+        colors->at(i)[0] = 0.0f;
+        colors->at(i)[1] = 0.0f;
+        colors->at(i)[2] = 0.0f;
     }
 
     for (int i = 0; i < height; i++)
-        for (int j = 0; j < width; j++) {
+        for (int j = 0; j < width; j++)
+        {
 
             float theta, phi, x, y, z, domega;
             theta = float(i)/float(height) * PI;
@@ -114,14 +97,18 @@ vector<vector<float>> *EnvMap::getLightCoeff2(int order, Matrix R)
 
             domega = (2 * PI / width)*(PI / height)*sinc(theta);
 
-            updateCoeff(i, j, x/norm, y/norm, z/norm, domega);
+            updateValue(i, j, x/norm, y/norm, z/norm, domega);
         }
 
-    return colors;
+    for(int i = 0; i < colors->size(); i ++)
+    {
+        obj->lights[3 * i] = colors->at(i)[0];
+        obj->lights[3 * i + 1] = colors->at(i)[1];
+        obj->lights[3 * i + 2] = colors->at(i)[2];
+    }
 }
 
-
-void EnvMap::updateCoeff(int i, int j, float x, float y, float z, float domega)
+void EnvMap::updateValue(int i, int j, float x, float y, float z, float domega)
 {
     // This is parallelizable
     vector<GLubyte> pixel = readPixel(i, j);
@@ -159,7 +146,6 @@ void EnvMap::updateCoeff(int i, int j, float x, float y, float z, float domega)
     }
 }
 
-
 vector<GLubyte> EnvMap::readPixel(int i, int j)
 {
     int offset = 4 * (i * width + j);
@@ -172,17 +158,16 @@ vector<GLubyte> EnvMap::readPixel(int i, int j)
     return rgb;
 }
 
-void EnvMap::renderToTexture(const char* path)
+void EnvMap::renderToTexture(int width_, int height_, const char* path)
 {
+    width = width_;
+    height = height_;
+
     glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     //Create the texture
     GLuint textureID = GLUtils::loadTexture(path);
-    //GLuint temp = GLUtils::loadTexture("texture/bloodMoon/equirectangular_512256.png");
-//    GLuint temp = GLUtils::loadTexture("texture/test/equirectangular3_320160.png");
-    //GLuint temp = GLUtils::loadTexture("texture/graceCathedral/equirectangular_512256.png");
-    //GLuint temp = GLUtils::loadTexture("texture/test/equirectangular_320160.png");
 
     //Bind the texture to your FBO
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
@@ -196,4 +181,5 @@ void EnvMap::renderToTexture(const char* path)
     // Delete framebuffer
     glDeleteFramebuffers(1, &FBO);
 }
+
 

@@ -107,15 +107,6 @@ void Obj::renderer()
     mMVPMatrix.multiply(mProjectionMatrix, mMVMatrix);
     glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix.mData);
 
-    // Pass in light coefficient information
-//    // Test cubemap
-//    lights = {2.46f, 1.27f, 1.11f, 0.05f, -0.053f, 0.41f, 1.95f, 0.25f, 0.57f, 0.45f, 0.30f, -0.34f};
-//
-//    // Blood moon cubemap
-//    lights = {1.64f, 0.610f, 0.333f,  -0.202f, -0.056f, 0.25f, 1.15f, 0.42f, 0.194f, 0.024f, 0.0036f, 0.0075f};
-//    for(int i = 0; i < lights.size(); i++)
-//        lights[i] *= 1.5f;
-
     glUniform3fv(mLightHandle, 4, &lights[0]);
 
     //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
@@ -172,19 +163,6 @@ void Obj::setRotation(float alpha, float beta, float gamma)
 
     LOGD("%f %f", result[0], result[1]);
 }
-
-void Obj::setLightCoeff(vector<vector<float>> lightCoeff)
-{
-    lights.clear();
-    lights = vector<float>();
-    for(int i = 0; i < lightCoeff.size(); i++)
-    {
-        lights.push_back(lightCoeff[i][0]);
-        lights.push_back(lightCoeff[i][1]);
-        lights.push_back(lightCoeff[i][2]);
-    }
-}
-
 
 vector<float> processLine(string line, int size)
 {
