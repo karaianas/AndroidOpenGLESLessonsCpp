@@ -57,13 +57,14 @@ void Native7Lesson::draw()
     mydev01->draw();
     float elapsed = clock() - start;
     float fps = CLOCKS_PER_SEC/elapsed;
-    if(abs(fps - previousTime) > 10.0f)
-    {
-        updateFPS(fps);
-        previousTime = fps;
-    }
+    updateFPS(fps);
+//    if(abs(fps - previousTime) > 10.0f)
+//    {
+//        updateFPS(fps);
+//        previousTime = fps;
+//    }
 //    else
-//        updateFPS(previousTime);
+//        previousTime = fps;
 }
 
 void Native7Lesson::decreaseCubeCount() {

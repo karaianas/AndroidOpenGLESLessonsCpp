@@ -16,8 +16,9 @@ MyDev01::MyDev01()
     envmap = new EnvMap();
 
     // Object specification
-    string path = "/planeNsphere.";
-    //string path = "/maxPlanck.";
+    //string path = "/planeNsphere.";
+    //string path = "/plant.";
+    string path = "/maxPlanck.";
     string modelPath = "models" + path + "model";
     string coeffPath = "coefficients" + path + "coeff";
     obj->parser(modelPath.c_str(), coeffPath.c_str());
@@ -73,9 +74,9 @@ void MyDev01::create()
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Position the eye in front of the origin.
-    float eyeX = 5.0f;
+    float eyeX = -5.0f;
     float eyeY = 0.0f;
-    float eyeZ = -5.0f;
+    float eyeZ = 5.0f;
 
     // We are looking at the origin
     float centerX = 0.0f;

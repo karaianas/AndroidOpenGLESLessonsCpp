@@ -232,7 +232,7 @@ void Obj::parser(const char* objPath, const char* coeffPath)
         if(numbers.size() == 6)
         {
             //float len = sqrt(numbers[0]*numbers[0] + numbers[1]*numbers[1] + numbers[2]*numbers[2]);
-            float scaleFactor = 1.0f;//0.1f for max
+            float scaleFactor = 0.1f;//1.0f;//0.1f for max
             positions.push_back(numbers[0] * scaleFactor);// / len);
             positions.push_back(numbers[1] * scaleFactor);// / len);
             positions.push_back(numbers[2] * scaleFactor);// / len);
