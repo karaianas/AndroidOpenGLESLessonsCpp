@@ -24,31 +24,27 @@ MyDev01::MyDev01()
     obj->parser(modelPath.c_str(), coeffPath.c_str());
 
     // Environment map specification
-//    string envPath = "texture/test/equirectangular3_320160.png";
-//    envmap->renderToTexture(320, 160, envPath.c_str());
-    string envPath = "texture/test/equirectangular3_8040.png";
-    envmap->renderToTexture(80, 40, envPath.c_str());
+    string envPath = "texture/bloodMoon/equirectangular_12864.png";
+    envmap->renderToTexture(128, 64, envPath.c_str());
+//    string envPath = "texture/test/equirectangular3_8040.png";
+//    envmap->renderToTexture(80, 40, envPath.c_str());
     envmap->obj = obj;
     int order = 2;
 
     envmap->setLightCoeff(order);
 
     // Skybox specification
-//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
-//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
+    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
+                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
 
 //    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
 //                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
 
-    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
-     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
+//    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
+//     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
 
 //    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
 //                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
-
-//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
-//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
-
 
     skybox->setSkybox(paths);
 }
