@@ -1,5 +1,6 @@
 # AndroidOpenGLESLessonsCpp
-This implementation is built on top of this source code: https://github.com/learnopengles
+This is an Android app for rendering models with environment map using precomputed radiance transfer and spherical harmonics.
+The implementation is built on top of this source code: https://github.com/learnopengles
 
 Demo video of the implementation: https://youtu.be/BibBvfgBAfs
 
