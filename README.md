@@ -1,5 +1,5 @@
 # AndroidOpenGLESLessonsCpp
-This implementation is built on top of the following source code: https://github.com/learnopengles
+This implementation is built on top of this source code: https://github.com/learnopengles
 
 Demo video of the implementation: https://youtu.be/BibBvfgBAfs
 
