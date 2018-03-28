@@ -61,6 +61,8 @@ public:
 
 private:
 
+    bool isSkyboxRotation;
+
     // model/view/projection matrix
     Matrix *mModelMatrix;
     Matrix *mViewMatrix;

@@ -45,7 +45,12 @@ public:
     void change(int width, int height);
     void draw();
 
+    void setSkybox(bool val);
+    void changeSkybox();
+
     void setDelta(float x, float y);
+
+    bool isSky;
 
     Obj* obj;
     Skybox* skybox;
@@ -59,6 +64,7 @@ public:
     //
     Matrix *mAccumulatedRotationMatrix;
     Matrix *mCurrentRotationMatrix;
+    Matrix *inverseRotationMatrix;
 
     GLuint mProgramHandle;
     GLuint mSkyProgramHandle;

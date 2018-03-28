@@ -31,6 +31,8 @@ Native7Lesson::Native7Lesson() {
 
     mydev01 = new MyDev01();
     previousTime = 0.0f;
+
+    isSkyboxRotation = true;
 }
 
 Native7Lesson::~Native7Lesson() {
@@ -71,6 +73,7 @@ void Native7Lesson::decreaseCubeCount() {
 //    if (genData != nullptr && genData->mLastRequestedCubeFactor > 1) {
 //        genData->genCube(--genData->mLastRequestedCubeFactor, false, false);
 //    }
+
 }
 
 void Native7Lesson::increaseCubeCount() {
@@ -92,6 +95,9 @@ void Native7Lesson::toggleStride() {
 
 void Native7Lesson::toggleVBOs() {
 //    genData->genCube(genData->mLastRequestedCubeFactor, true, false);
+    isSkyboxRotation = !isSkyboxRotation;
+    mydev01->setSkybox(isSkyboxRotation);
+    lesson7->updateVboStatus(isSkyboxRotation);
 }
 
 void Native7Lesson::updateVboStatus(bool useVbos) {

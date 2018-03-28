@@ -24,24 +24,24 @@ MyDev01::MyDev01()
     obj->parser(modelPath.c_str(), coeffPath.c_str());
 
     // Environment map specification
-    string envPath = "texture/bloodMoon/equirectangular_6432.png";
-    envmap->renderToTexture(64, 32, envPath.c_str());
-//    string envPath = "texture/test/equirectangular3_8040.png";
-//    envmap->renderToTexture(80, 40, envPath.c_str());
+//    string envPath = "texture/bloodMoon/equirectangular_6432.png";
+//    envmap->renderToTexture(64, 32, envPath.c_str());
+    string envPath = "texture/test/equirectangular3_8040.png";
+    envmap->renderToTexture(80, 40, envPath.c_str());
     envmap->obj = obj;
     int order = 3;
 
     envmap->setLightCoeff(order);
 
     // Skybox specification
-    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
-                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
+//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
+//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
 
 //    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
 //                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
 
-//        const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
-//                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
+        const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
+                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
 
 //    const char * paths[6] = {"texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/blackbox.png",
 //     "texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/far.png"};
@@ -50,6 +50,7 @@ MyDev01::MyDev01()
 //                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
 
     skybox->setSkybox(paths);
+    isSky = true;
 }
 
 MyDev01::~MyDev01()
@@ -124,6 +125,10 @@ void MyDev01::create()
     mCurrentRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix->identity();
+
+    inverseRotationMatrix = new Matrix();
+    inverseRotationMatrix->identity();
+
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
 }
@@ -170,17 +175,21 @@ void MyDev01::draw()
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
     mAccumulatedRotationMatrix->multiply(*mCurrentRotationMatrix, *mAccumulatedRotationMatrix);
-    Matrix* inverseRotationmatrix = new Matrix();
-    mAccumulatedRotationMatrix->transpose(*inverseRotationmatrix, *mAccumulatedRotationMatrix);
+    mAccumulatedRotationMatrix->transpose(*inverseRotationMatrix, *mAccumulatedRotationMatrix);
 
-    envmap->updateLightCoeff(*inverseRotationmatrix);
+    changeSkybox();
+    /*
+    //envmap->updateLightCoeff(*inverseRotationMatrix);
+    envmap->updateLightCoeff(*mAccumulatedRotationMatrix);
 
+    obj->mModelMatrix = *mAccumulatedRotationMatrix;
     obj->mViewMatrix = *mViewMatrix;
     obj->mProjectionMatrix = *mProjectionMatrix;
 
-    skybox->mModelMatrix = *mAccumulatedRotationMatrix;
+    //skybox->mModelMatrix = *mAccumulatedRotationMatrix;
     skybox->mViewMatrix = *mViewMatrix;
     skybox->mProjectionMatrix = *mProjectionMatrix;
+     */
 
     // Set object and skybox V and P
 //    obj->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
@@ -191,6 +200,37 @@ void MyDev01::draw()
     skybox->renderer();
     obj->renderer();
 
+}
+
+void MyDev01::setSkybox(bool val)
+{
+    isSky = val;
+
+//    Matrix* temp = mAccumulatedRotationMatrix;
+//    mAccumulatedRotationMatrix = inverseRotationMatrix;
+//    inverseRotationMatrix = temp;
+    mAccumulatedRotationMatrix->identity();
+    inverseRotationMatrix->identity();
+    obj->mModelMatrix.identity();
+    skybox->mModelMatrix.identity();
+}
+
+void MyDev01::changeSkybox()
+{
+    if(isSky)
+    {
+        envmap->updateLightCoeff(*inverseRotationMatrix);
+        skybox->mModelMatrix = *mAccumulatedRotationMatrix;
+    }
+    else
+    {
+        envmap->updateLightCoeff(*mAccumulatedRotationMatrix);
+        obj->mModelMatrix = *mAccumulatedRotationMatrix;
+    }
+    obj->mViewMatrix = *mViewMatrix;
+    obj->mProjectionMatrix = *mProjectionMatrix;
+    skybox->mViewMatrix = *mViewMatrix;
+    skybox->mProjectionMatrix = *mProjectionMatrix;
 }
 
 void MyDev01::setDelta(float x, float y)
