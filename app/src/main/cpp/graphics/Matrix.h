@@ -47,6 +47,8 @@ public:
 
     void rotateLocal(float radians, float x, float y, float z);
 
+    void transpose(Matrix& result, Matrix& refer);
+
     // Sets this matrix to be the result of multiplying the given matrices.
     void multiply(const Matrix &l, const Matrix &r);
 

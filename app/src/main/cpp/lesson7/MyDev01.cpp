@@ -24,12 +24,12 @@ MyDev01::MyDev01()
     obj->parser(modelPath.c_str(), coeffPath.c_str());
 
     // Environment map specification
-    string envPath = "texture/bloodMoon/equirectangular_12864.png";
-    envmap->renderToTexture(128, 64, envPath.c_str());
+    string envPath = "texture/bloodMoon/equirectangular_6432.png";
+    envmap->renderToTexture(64, 32, envPath.c_str());
 //    string envPath = "texture/test/equirectangular3_8040.png";
 //    envmap->renderToTexture(80, 40, envPath.c_str());
     envmap->obj = obj;
-    int order = 2;
+    int order = 3;
 
     envmap->setLightCoeff(order);
 
@@ -40,8 +40,11 @@ MyDev01::MyDev01()
 //    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
 //                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
 
-//    const char * paths[6] = {"texture/test/right.png", "texture/test/left.png", "texture/test/top.png",
-//     "texture/test/bottom.png", "texture/test/near.png", "texture/test/far.png"};
+//        const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
+//                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
+
+//    const char * paths[6] = {"texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/blackbox.png",
+//     "texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/far.png"};
 
 //    const char * paths[6] = {"texture/graceCathedral/right.png", "texture/graceCathedral/left.png", "texture/graceCathedral/top.png",
 //                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
@@ -70,9 +73,9 @@ void MyDev01::create()
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Position the eye in front of the origin.
-    float eyeX = -5.0f;
+    float eyeX = 0.0f;
     float eyeY = 0.0f;
-    float eyeZ = 5.0f;
+    float eyeZ = 10.0f;
 
     // We are looking at the origin
     float centerX = 0.0f;
@@ -121,12 +124,8 @@ void MyDev01::create()
     mCurrentRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix = new Matrix();
     mAccumulatedRotationMatrix->identity();
-
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
-
-    //obj->mModelMatrix.rotateLocal(-90, 0, 1, 0);
-    //obj->mModelMatrix.rotateLocal(-90, 0, 0, 1);
 }
 
 void MyDev01::change(int width, int height)
@@ -149,7 +148,7 @@ void MyDev01::change(int width, int height)
 void MyDev01::draw()
 {
     //time += 0.01f;
-    currentTime = clock();
+    //currentTime = clock();
     //updateFPS(time);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -162,45 +161,35 @@ void MyDev01::draw()
     // Translate the cube into the screen.
     //mModelMatrix->identity();
     //mModelMatrix->translate(0.0f, 0.0f, -3.5f);
-    //obj->mModelMatrix.rotate(90, 0, 1, 0);
-    //obj->mModelMatrix.rotate(90, 1, 0, 0);
-    //skybox->mModelMatrix.rotate(1, 0, 0, 1);
-    //obj->setRotation(0.0174f, 0.0f, -0.0174f);
-
-    //obj->mModelMatrix.rotateLocal(1, 0, 1, 0);
-    //envmap->updateLightCoeff(obj->mModelMatrix);
 
     // Touch rotation
     mCurrentRotationMatrix->identity();
-    mCurrentRotationMatrix->rotate(mDeltaX, 0.0f, 1.0f, 0.0f);
-    mCurrentRotationMatrix->rotate(mDeltaY, 1.0f, 0.0f, 0.0f);
+    mCurrentRotationMatrix->rotateLocal(mDeltaX, 0.0f, 1.0f, 0.0f);
+    mCurrentRotationMatrix->rotateLocal(mDeltaY, 1.0f, 0.0f, 0.0f);
+
     mDeltaX = 0.0f;
     mDeltaY = 0.0f;
     mAccumulatedRotationMatrix->multiply(*mCurrentRotationMatrix, *mAccumulatedRotationMatrix);
+    Matrix* inverseRotationmatrix = new Matrix();
+    mAccumulatedRotationMatrix->transpose(*inverseRotationmatrix, *mAccumulatedRotationMatrix);
 
-    // Set object and skybox V and P
-    //obj->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
-    obj->mModelMatrix = *mAccumulatedRotationMatrix;
+    envmap->updateLightCoeff(*inverseRotationmatrix);
+
     obj->mViewMatrix = *mViewMatrix;
     obj->mProjectionMatrix = *mProjectionMatrix;
-    envmap->updateLightCoeff(obj->mModelMatrix);
 
-    //skybox->mModelMatrix = *mAccumulatedRotationMatrix;
-    //envmap->updateLightCoeff(skybox->mModelMatrix);
-
-    //skybox->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
+    skybox->mModelMatrix = *mAccumulatedRotationMatrix;
     skybox->mViewMatrix = *mViewMatrix;
     skybox->mProjectionMatrix = *mProjectionMatrix;
 
+    // Set object and skybox V and P
+//    obj->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
+//    skybox->mModelMatrix = *mAccumulatedRotationMatrix;
+//    envmap->updateLightCoeff(skybox->mModelMatrix);
+//    skybox->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
+
     skybox->renderer();
     obj->renderer();
-
-//    float lastDeltaTime = CLOCKS_PER_SEC/deltaTime;
-//    deltaTime = clock() - currentTime;
-//    float currentDeltaTime = CLOCKS_PER_SEC/(deltaTime);
-//    if(abs(int(lastDeltaTime) - int(currentDeltaTime)) > 1)
-//        updateFPS(currentDeltaTime);
-//    updateFPS(10.0f);
 
 }
 

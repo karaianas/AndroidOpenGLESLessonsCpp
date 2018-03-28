@@ -67,6 +67,7 @@ void EnvMap::setLightCoeff(int order)
 
 void EnvMap::updateLightCoeff(Matrix& R)
 {
+    //LOGD("%d", colors->size());
     for(int i = 0; i < colors->size(); i++)
     {
         colors->at(i)[0] = 0.0f;
@@ -86,18 +87,29 @@ void EnvMap::updateLightCoeff(Matrix& R)
             y = sin(theta)*sin(phi);
             z = cos(theta);
 
+
             const float temp[4] = {x, y, z, 1.0f};
             float result[4];
             R.multiplyVector(result, R, temp);
+
+//            if(i == 0 && j == 0)
+//            {
+//                LOGD("%f %f %f %f", result[0], result[1], result[2], result[3]);
+//                LOGD("%f %f %f", x, y, z);
+//            }
+
             x = result[0];
             y = result[1];
             z = result[2];
+
+
 
             float norm = sqrtf(powf(x, 2) + powf(y, 2) + powf(z, 2));
 
             domega = (2 * PI / width)*(PI / height)*sinc(theta);
 
             updateValue(i, j, x/norm, y/norm, z/norm, domega);
+
         }
 
     for(int i = 0; i < colors->size(); i ++)
@@ -116,32 +128,33 @@ void EnvMap::updateValue(int i, int j, float x, float y, float z, float domega)
     for (int col = 0; col < 3; col++)
     {
         float c; /* A different constant for each coefficient */
+        float temp = float(int(pixel[col]))/255.0f;
 
         /* L_{00}.  Note that Y_{00} = 0.282095 */
         c = 0.282095;
-        colors->at(0)[col] += float(int(pixel[col]))/255.0f * c*domega;
+        colors->at(0)[col] += temp * c*domega;
 
         /* L_{1m}. -1 <= m <= 1.  The linear terms */
         c = 0.488603;
-        colors->at(1)[col] += float(int(pixel[col]))/255.0f * (c*y)*domega;   /* Y_{1-1} = 0.488603 y  */
-        colors->at(2)[col] += float(int(pixel[col]))/255.0f * (c*z)*domega;   /* Y_{10}  = 0.488603 z  */
-        colors->at(3)[col] += float(int(pixel[col]))/255.0f * (c*x)*domega;   /* Y_{11}  = 0.488603 x  */
+        colors->at(1)[col] += temp * (c*y)*domega;   /* Y_{1-1} = 0.488603 y  */
+        colors->at(2)[col] += temp * (c*z)*domega;   /* Y_{10}  = 0.488603 z  */
+        colors->at(3)[col] += temp * (c*x)*domega;   /* Y_{11}  = 0.488603 x  */
 
-//        /* The Quadratic terms, L_{2m} -2 <= m <= 2 */
-//
-//        /* First, L_{2-2}, L_{2-1}, L_{21} corresponding to xy,yz,xz */
-//        c = 1.092548;
-//        coeffs[4][col] += hdr[col] * (c*x*y)*domega; /* Y_{2-2} = 1.092548 xy */
-//        coeffs[5][col] += hdr[col] * (c*y*z)*domega; /* Y_{2-1} = 1.092548 yz */
-//        coeffs[7][col] += hdr[col] * (c*x*z)*domega; /* Y_{21}  = 1.092548 xz */
-//
-//        /* L_{20}.  Note that Y_{20} = 0.315392 (3z^2 - 1) */
-//        c = 0.315392;
-//        coeffs[6][col] += hdr[col] * (c*(3 * z*z - 1))*domega;
-//
-//        /* L_{22}.  Note that Y_{22} = 0.546274 (x^2 - y^2) */
-//        c = 0.546274;
-//        coeffs[8][col] += hdr[col] * (c*(x*x - y*y))*domega;
+        /* The Quadratic terms, L_{2m} -2 <= m <= 2 */
+
+        /* First, L_{2-2}, L_{2-1}, L_{21} corresponding to xy,yz,xz */
+        c = 1.092548;
+        colors->at(4)[col] += temp * (c*x*y)*domega; /* Y_{2-2} = 1.092548 xy */
+        colors->at(5)[col] += temp * (c*y*z)*domega; /* Y_{2-1} = 1.092548 yz */
+        colors->at(6)[col] += temp * (c*x*z)*domega; /* Y_{21}  = 1.092548 xz */
+
+        /* L_{20}.  Note that Y_{20} = 0.315392 (3z^2 - 1) */
+        c = 0.315392;
+        colors->at(7)[col] += temp * (c*(3 * z*z - 1))*domega;
+
+        /* L_{22}.  Note that Y_{22} = 0.546274 (x^2 - y^2) */
+        c = 0.546274;
+        colors->at(8)[col] += temp * (c*(x*x - y*y))*domega;
 
     }
 }

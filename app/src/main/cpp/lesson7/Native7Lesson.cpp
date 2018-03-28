@@ -68,15 +68,15 @@ void Native7Lesson::draw()
 }
 
 void Native7Lesson::decreaseCubeCount() {
-    if (genData != nullptr && genData->mLastRequestedCubeFactor > 1) {
-        genData->genCube(--genData->mLastRequestedCubeFactor, false, false);
-    }
+//    if (genData != nullptr && genData->mLastRequestedCubeFactor > 1) {
+//        genData->genCube(--genData->mLastRequestedCubeFactor, false, false);
+//    }
 }
 
 void Native7Lesson::increaseCubeCount() {
-    if (genData != nullptr && genData->mLastRequestedCubeFactor < 16) {
-        genData->genCube(++genData->mLastRequestedCubeFactor, false, false);
-    }
+//    if (genData != nullptr && genData->mLastRequestedCubeFactor < 16) {
+//        genData->genCube(++genData->mLastRequestedCubeFactor, false, false);
+//    }
 }
 
 void Native7Lesson::setDelta(float x, float y) {
@@ -87,11 +87,11 @@ void Native7Lesson::setDelta(float x, float y) {
 }
 
 void Native7Lesson::toggleStride() {
-    genData->genCube(genData->mLastRequestedCubeFactor, false, true);
+//    genData->genCube(genData->mLastRequestedCubeFactor, false, true);
 }
 
 void Native7Lesson::toggleVBOs() {
-    genData->genCube(genData->mLastRequestedCubeFactor, true, false);
+//    genData->genCube(genData->mLastRequestedCubeFactor, true, false);
 }
 
 void Native7Lesson::updateVboStatus(bool useVbos) {

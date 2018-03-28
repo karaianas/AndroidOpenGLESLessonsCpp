@@ -121,6 +121,48 @@ void Matrix::rotateLocal(float radians, float x, float y, float z) {
     delete temp;
 }
 
+void Matrix::transpose(Matrix& result, Matrix& refer)
+{
+    float m0 = refer.mData[0];
+    float m1 = refer.mData[1];
+    float m2 = refer.mData[2];
+    float m3 = refer.mData[3];
+
+    float m4 = refer.mData[4];
+    float m5 = refer.mData[5];
+    float m6 = refer.mData[6];
+    float m7 = refer.mData[7];
+
+    float m8 = refer.mData[8];
+    float m9 = refer.mData[9];
+    float m10 = refer.mData[10];
+    float m11 = refer.mData[11];
+
+    float m12 = refer.mData[12];
+    float m13 = refer.mData[13];
+    float m14 = refer.mData[14];
+    float m15 = refer.mData[15];
+
+    result.identity();
+    result.mData[0] = m0;
+    result.mData[1] = m4;
+    result.mData[2] = m8;
+    result.mData[3] = m12;
+    result.mData[4] = m1;
+    result.mData[5] = m5;
+    result.mData[6] = m9;
+    result.mData[7] = m13;
+    result.mData[8] = m2;
+    result.mData[9] = m6;
+    result.mData[10] = m10;
+    result.mData[11] = m14;
+    result.mData[12] = m3;
+    result.mData[13] = m7;
+    result.mData[14] = m11;
+    result.mData[15] = m15;
+
+}
+
 void Matrix::multiply(const Matrix &l, const Matrix &r) {
     float const *const lhs = l.mData;
     float const *const rhs = r.mData;
