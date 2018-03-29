@@ -47,8 +47,8 @@ MyDev01::MyDev01()
         const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
                              "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
 
-        const char * paths2[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
-                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
+        const char * paths2[6] = {"texture/sunset/right.png", "texture/sunset/left.png", "texture/sunset/top.png",
+                             "texture/sunset/bottom.png", "texture/sunset/near.png", "texture/sunset/far.png"};
 
 //    const char * paths[6] = {"texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/blackbox.png",
 //     "texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/far.png"};
