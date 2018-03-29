@@ -13,7 +13,9 @@ MyDev01::MyDev01()
 
     obj = new Obj();
     skybox = new Skybox();
+    skybox2 = new Skybox();
     envmap = new EnvMap();
+    envmap2 = new EnvMap();
 
     // Object specification
     //string path = "/planeNsphere.";
@@ -24,24 +26,29 @@ MyDev01::MyDev01()
     obj->parser(modelPath.c_str(), coeffPath.c_str());
 
     // Environment map specification
-//    string envPath = "texture/bloodMoon/equirectangular_6432.png";
-//    envmap->renderToTexture(64, 32, envPath.c_str());
     string envPath = "texture/test/equirectangular3_8040.png";
     envmap->renderToTexture(80, 40, envPath.c_str());
     envmap->obj = obj;
-    int order = 3;
+
+    string envPath2 = "texture/bloodMoon/equirectangular_6432.png";
+    envmap2->renderToTexture(64, 32, envPath2.c_str());
+    envmap2->obj = obj;
+
+    int order = 4;
 
     envmap->setLightCoeff(order);
+    envmap2->setLightCoeff(order);
 
     // Skybox specification
-//    const char * paths[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
-//                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
 
 //    const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
 //                             "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
 
         const char * paths[6] = {"texture/test/annotated/right.png", "texture/test/annotated/left.png", "texture/test/annotated/top.png",
                              "texture/test/annotated/bottom.png", "texture/test/annotated/near.png", "texture/test/annotated/far.png"};
+
+        const char * paths2[6] = {"texture/bloodMoon/right.png", "texture/bloodMoon/left.png", "texture/bloodMoon/top.png",
+                             "texture/bloodMoon/bottom.png", "texture/bloodMoon/near.png", "texture/bloodMoon/far.png"};
 
 //    const char * paths[6] = {"texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/blackbox.png",
 //     "texture/test/blackbox.png", "texture/test/blackbox.png", "texture/test/far.png"};
@@ -50,6 +57,9 @@ MyDev01::MyDev01()
 //                             "texture/graceCathedral/bottom.png", "texture/graceCathedral/near.png", "texture/graceCathedral/far.png"};
 
     skybox->setSkybox(paths);
+    skybox2->setSkybox(paths2);
+    currentSkybox = skybox;
+    currentEnv = envmap;
     isSky = true;
 }
 
@@ -113,10 +123,18 @@ void MyDev01::create()
         return;
     }
 
+    mSkyProgramHandle2 = GLUtils::createProgram(&vertex2, &fragment2);
+    if (!mSkyProgramHandle2)
+    {
+        LOGD("Could not create skybox program");
+        return;
+    }
+
     //LOGD("%d %d", mProgramHandle, mSkyProgramHandle);
 
     obj->initialize(mProgramHandle);
     skybox->initialize(mSkyProgramHandle);
+    skybox2->initialize(mSkyProgramHandle2);
 
     mModelMatrix = new Matrix();
     mModelMatrix->identity();
@@ -177,60 +195,60 @@ void MyDev01::draw()
     mAccumulatedRotationMatrix->multiply(*mCurrentRotationMatrix, *mAccumulatedRotationMatrix);
     mAccumulatedRotationMatrix->transpose(*inverseRotationMatrix, *mAccumulatedRotationMatrix);
 
-    changeSkybox();
-    /*
-    //envmap->updateLightCoeff(*inverseRotationMatrix);
-    envmap->updateLightCoeff(*mAccumulatedRotationMatrix);
-
-    obj->mModelMatrix = *mAccumulatedRotationMatrix;
-    obj->mViewMatrix = *mViewMatrix;
-    obj->mProjectionMatrix = *mProjectionMatrix;
-
-    //skybox->mModelMatrix = *mAccumulatedRotationMatrix;
-    skybox->mViewMatrix = *mViewMatrix;
-    skybox->mProjectionMatrix = *mProjectionMatrix;
-     */
+    rotation();
 
     // Set object and skybox V and P
 //    obj->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
-//    skybox->mModelMatrix = *mAccumulatedRotationMatrix;
-//    envmap->updateLightCoeff(skybox->mModelMatrix);
-//    skybox->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
 
-    skybox->renderer();
+    currentSkybox->renderer();
     obj->renderer();
 
 }
 
-void MyDev01::setSkybox(bool val)
+void MyDev01::setRotationMode(bool val)
 {
     isSky = val;
 
-//    Matrix* temp = mAccumulatedRotationMatrix;
-//    mAccumulatedRotationMatrix = inverseRotationMatrix;
-//    inverseRotationMatrix = temp;
     mAccumulatedRotationMatrix->identity();
     inverseRotationMatrix->identity();
     obj->mModelMatrix.identity();
-    skybox->mModelMatrix.identity();
+    currentSkybox->mModelMatrix.identity();
 }
 
-void MyDev01::changeSkybox()
+void MyDev01::rotation()
 {
     if(isSky)
     {
-        envmap->updateLightCoeff(*inverseRotationMatrix);
-        skybox->mModelMatrix = *mAccumulatedRotationMatrix;
+        currentEnv->updateLightCoeff(*inverseRotationMatrix);
+        currentSkybox->mModelMatrix = *mAccumulatedRotationMatrix;
     }
     else
     {
-        envmap->updateLightCoeff(*mAccumulatedRotationMatrix);
+        currentEnv->updateLightCoeff(*mAccumulatedRotationMatrix);
         obj->mModelMatrix = *mAccumulatedRotationMatrix;
     }
     obj->mViewMatrix = *mViewMatrix;
     obj->mProjectionMatrix = *mProjectionMatrix;
     skybox->mViewMatrix = *mViewMatrix;
     skybox->mProjectionMatrix = *mProjectionMatrix;
+    skybox2->mViewMatrix = *mViewMatrix;
+    skybox2->mProjectionMatrix = *mProjectionMatrix;
+}
+
+void MyDev01::setSkybox(bool val)
+{
+    if(val)
+    {
+        currentSkybox = skybox;
+        currentEnv = envmap;
+    }
+    else
+    {
+        currentSkybox = skybox2;
+        currentEnv = envmap2;
+    }
+
+
 }
 
 void MyDev01::setDelta(float x, float y)

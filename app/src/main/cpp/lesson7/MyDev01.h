@@ -45,16 +45,22 @@ public:
     void change(int width, int height);
     void draw();
 
+    void setRotationMode(bool val);
+    void rotation();
+
     void setSkybox(bool val);
-    void changeSkybox();
 
     void setDelta(float x, float y);
 
     bool isSky;
 
     Obj* obj;
+    Skybox* currentSkybox;
     Skybox* skybox;
+    Skybox* skybox2;
+    EnvMap* currentEnv;
     EnvMap* envmap;
+    EnvMap* envmap2;
 
     // model/view/projection matrix
     Matrix *mModelMatrix;
@@ -68,6 +74,7 @@ public:
 
     GLuint mProgramHandle;
     GLuint mSkyProgramHandle;
+    GLuint mSkyProgramHandle2;
 
     float mDeltaX;
     float mDeltaY;

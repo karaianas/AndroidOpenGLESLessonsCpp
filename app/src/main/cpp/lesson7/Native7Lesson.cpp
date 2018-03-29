@@ -33,6 +33,7 @@ Native7Lesson::Native7Lesson() {
     previousTime = 0.0f;
 
     isSkyboxRotation = true;
+    skyboxMode = true;
 }
 
 Native7Lesson::~Native7Lesson() {
@@ -80,6 +81,8 @@ void Native7Lesson::increaseCubeCount() {
 //    if (genData != nullptr && genData->mLastRequestedCubeFactor < 16) {
 //        genData->genCube(++genData->mLastRequestedCubeFactor, false, false);
 //    }
+    skyboxMode = !skyboxMode;
+    mydev01->setSkybox(skyboxMode);
 }
 
 void Native7Lesson::setDelta(float x, float y) {
@@ -89,14 +92,16 @@ void Native7Lesson::setDelta(float x, float y) {
     mydev01->setDelta(x, y);
 }
 
+
 void Native7Lesson::toggleStride() {
 //    genData->genCube(genData->mLastRequestedCubeFactor, false, true);
 }
 
+// Rotation toggle
 void Native7Lesson::toggleVBOs() {
 //    genData->genCube(genData->mLastRequestedCubeFactor, true, false);
     isSkyboxRotation = !isSkyboxRotation;
-    mydev01->setSkybox(isSkyboxRotation);
+    mydev01->setRotationMode(isSkyboxRotation);
     lesson7->updateVboStatus(isSkyboxRotation);
 }
 
@@ -131,7 +136,7 @@ void Native7Lesson::updateStrideStatus(bool useStride) {
 // ++++++++++++++++++++++++
 void Native7Lesson::updateFPS(float fps)
 {
-    LOGD("FPS %3.2f", fps);
+    //LOGD("FPS %3.2f", fps);
     Context *pctx = &g_ctx;
     JavaVM *javaVM = pctx->javaVM;
     JNIEnv *env;

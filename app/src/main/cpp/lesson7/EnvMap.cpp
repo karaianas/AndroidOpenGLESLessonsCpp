@@ -156,6 +156,33 @@ void EnvMap::updateValue(int i, int j, float x, float y, float z, float domega)
         c = 0.546274;
         colors->at(8)[col] += temp * (c*(x*x - y*y))*domega;
 
+        /* L_{3-3}*/
+        c = 0.59004;
+        colors->at(9)[col] += temp * (c * (3 * x * x * y - y * y * y)) * domega;
+
+        /* L_{3-2}*/
+        c =  1.44530;
+        colors->at(10)[col] += temp * (c * (2 * x * y * z)) * domega;
+
+        /* L_{3-1}*/
+        c =  0.45704;
+        colors->at(11)[col] += temp * (c * y * (5 * z * z - 1)) * domega;
+
+        /* L_{30}*/
+        c =  0.37317;
+        colors->at(12)[col] += temp * (c * z * (5 * z * z - 3)) * domega;
+
+        /* L_{31}*/
+        c =  0.45704;
+        colors->at(13)[col] += temp * (c * x * (5 * z * z - 1)) * domega;
+
+        /* L_{32}*/
+        c =  1.44530;
+        colors->at(14)[col] += temp * (c * z * (x * x - y * y)) * domega;
+
+        /* L_{33}*/
+        c = 0.59004;
+        colors->at(15)[col] += temp * (c * (x * x * x - 3 * x * y * y)) * domega;
     }
 }
 
@@ -175,6 +202,8 @@ void EnvMap::renderToTexture(int width_, int height_, const char* path)
 {
     width = width_;
     height = height_;
+
+    //glDeleteFramebuffers(1, &FBO);
 
     glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
