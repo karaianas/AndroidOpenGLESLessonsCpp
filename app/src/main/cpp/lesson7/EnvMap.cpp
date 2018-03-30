@@ -164,11 +164,13 @@ void EnvMap::updateValue(int i, int j, float x, float y, float z, float domega)
         c = 1.092548;
         colors->at(4)[col] += temp * (c*x*y)*domega; /* Y_{2-2} = 1.092548 xy */
         colors->at(5)[col] += temp * (c*y*z)*domega; /* Y_{2-1} = 1.092548 yz */
-        colors->at(6)[col] += temp * (c*x*z)*domega; /* Y_{21}  = 1.092548 xz */
 
         /* L_{20}.  Note that Y_{20} = 0.315392 (3z^2 - 1) */
         c = 0.315392;
-        colors->at(7)[col] += temp * (c*(3 * z*z - 1))*domega;
+        colors->at(6)[col] += temp * (c*(3 * z*z - 1))*domega;
+
+        c = 1.092548;
+        colors->at(7)[col] += temp * (c*x*z)*domega; /* Y_{21}  = 1.092548 xz */
 
         /* L_{22}.  Note that Y_{22} = 0.546274 (x^2 - y^2) */
         c = 0.546274;

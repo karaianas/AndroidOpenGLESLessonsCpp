@@ -16,15 +16,16 @@ int Obj::POSITION_STEP = 3;
 int Obj::NORMAL_STEP = 3;
 int Obj::COEFF_STEP = 4;
 
-Obj::Obj()
+Obj::Obj(float scaleFactor_)
 {
+    scaleFactor = scaleFactor_;
 }
 
 void Obj::initialize(GLuint mProgramHandle)
 {
     // (1) Generate buffers
-    GLuint buffers[4];
-    glGenBuffers(4, buffers);
+    GLuint buffers[7];
+    glGenBuffers(7, buffers);
 
     // (2) Bind buffers
     // Bind to the buffer. Future commands will affect this buffer specifically.
@@ -42,7 +43,19 @@ void Obj::initialize(GLuint mProgramHandle)
     glBufferData(GL_ARRAY_BUFFER, coeffs.size() * BYTES_PER_FLOAT, coeffs.data(),
                  GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[3]);
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
+    glBufferData(GL_ARRAY_BUFFER, coeffs2.size() * BYTES_PER_FLOAT, coeffs2.data(),
+                 GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
+    glBufferData(GL_ARRAY_BUFFER, coeffs3.size() * BYTES_PER_FLOAT, coeffs3.data(),
+                 GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
+    glBufferData(GL_ARRAY_BUFFER, coeffs4.size() * BYTES_PER_FLOAT, coeffs4.data(),
+                 GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[6]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()
                                           * BYTES_PER_SHORT,
                  indices.data(), GL_STATIC_DRAW);
@@ -54,7 +67,10 @@ void Obj::initialize(GLuint mProgramHandle)
     mPositionsBufferIdx = buffers[0];
     mNormalsBufferIdx = buffers[1];
     mCoeffsBufferIdx = buffers[2];
-    mIndexBufferIdx = buffers[3];
+    mCoeffsBufferIdx2 = buffers[3];
+    mCoeffsBufferIdx3 = buffers[4];
+    mCoeffsBufferIdx4 = buffers[5];
+    mIndexBufferIdx = buffers[6];
 
     mModelMatrix = Matrix();
     mModelMatrix.identity();
@@ -84,6 +100,9 @@ void Obj::renderer()
     mPositionHandle = (GLuint) glGetAttribLocation(program, "a_Position");
     mNormalHandle = (GLuint) glGetAttribLocation(program, "a_Normal");
     mCoeffHandle = (GLuint) glGetAttribLocation(program, "a_Coeff");
+    mCoeffHandle2 = (GLuint) glGetAttribLocation(program, "a_Coeff2");
+    mCoeffHandle3 = (GLuint) glGetAttribLocation(program, "a_Coeff3");
+    mCoeffHandle4 = (GLuint) glGetAttribLocation(program, "a_Coeff4");
 
     // Pass in the position information
     glBindBuffer(GL_ARRAY_BUFFER, mPositionsBufferIdx);
@@ -100,6 +119,18 @@ void Obj::renderer()
     glEnableVertexAttribArray(mCoeffHandle);
     glVertexAttribPointer(mCoeffHandle, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
 
+    glBindBuffer(GL_ARRAY_BUFFER, mCoeffsBufferIdx2);
+    glEnableVertexAttribArray(mCoeffHandle2);
+    glVertexAttribPointer(mCoeffHandle2, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mCoeffsBufferIdx3);
+    glEnableVertexAttribArray(mCoeffHandle3);
+    glVertexAttribPointer(mCoeffHandle3, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mCoeffsBufferIdx4);
+    glEnableVertexAttribArray(mCoeffHandle4);
+    glVertexAttribPointer(mCoeffHandle4, COEFF_STEP, GL_FLOAT, GL_FALSE, 0, 0);
+
     // Pass in matrix information
     mMVMatrix.multiply(mViewMatrix, mModelMatrix);
     glUniformMatrix4fv(mMVMatrixHandle, 1, GL_FALSE, mMVMatrix.mData);
@@ -107,7 +138,8 @@ void Obj::renderer()
     mMVPMatrix.multiply(mProjectionMatrix, mMVMatrix);
     glUniformMatrix4fv(mMVPMatrixHandle, 1, GL_FALSE, mMVPMatrix.mData);
 
-    glUniform3fv(mLightHandle, 4, &lights[0]);
+//    LOGD("%d", lights.size());
+    glUniform3fv(mLightHandle, 16, &lights[0]);
 
     //glDrawArrays(GL_TRIANGLES, 0, positions.size() / 3);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferIdx);
@@ -232,7 +264,6 @@ void Obj::parser(const char* objPath, const char* coeffPath)
         if(numbers.size() == 6)
         {
             //float len = sqrt(numbers[0]*numbers[0] + numbers[1]*numbers[1] + numbers[2]*numbers[2]);
-            float scaleFactor = 0.1f;//1.0f;//0.1f for max
             positions.push_back(numbers[0] * scaleFactor);// / len);
             positions.push_back(numbers[1] * scaleFactor);// / len);
             positions.push_back(numbers[2] * scaleFactor);// / len);
@@ -258,7 +289,7 @@ void Obj::parser(const char* objPath, const char* coeffPath)
         //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%s", s.c_str());
     }
 
-    int order = 2;
+    int order = 4;
     int numCoeff = order * order;
 
     const char *buffer2 = GLUtils::openTextFile(coeffPath);
@@ -278,7 +309,16 @@ void Obj::parser(const char* objPath, const char* coeffPath)
         if(numbers.size() == numCoeff)
         {
             for(int j = 0; j < numCoeff; j++)
-                coeffs.push_back(numbers[j]);
+            {
+                if(j < 4)
+                    coeffs.push_back(numbers[j]);
+                else if(j >= 4 && j < 8)
+                    coeffs2.push_back(numbers[j]);
+                else if(j >= 8 && j < 12)
+                    coeffs3.push_back(numbers[j]);
+                else
+                    coeffs4.push_back(numbers[j]);
+            }
         }
         //__android_log_print(ANDROID_LOG_INFO, "MyDev", "%d", numbers.size());
     }

@@ -63,6 +63,8 @@ private:
 
     bool isSkyboxRotation;
     int skyboxMode;
+    int objMode;
+    int counter;
 
     // model/view/projection matrix
     Matrix *mModelMatrix;

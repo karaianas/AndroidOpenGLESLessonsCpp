@@ -24,7 +24,7 @@ class Obj{
 
 public:
 
-    Obj();
+    Obj(float scaleFactor_);
 
     void initialize(GLuint mProgramHandle);
     void renderer();
@@ -42,6 +42,9 @@ public:
     GLuint mPositionHandle = 0;
     GLuint mNormalHandle = 0;
     GLuint mCoeffHandle = 0;
+    GLuint mCoeffHandle2 = 0;
+    GLuint mCoeffHandle3 = 0;
+    GLuint mCoeffHandle4 = 0;
     GLuint mMVPMatrixHandle = 0;
     GLuint mMVMatrixHandle = 0;
     GLuint mLightHandle = 0;
@@ -50,12 +53,20 @@ public:
     GLuint mNormalsBufferIdx;
     GLuint mIndexBufferIdx;
     GLuint mCoeffsBufferIdx;
+    GLuint mCoeffsBufferIdx2;
+    GLuint mCoeffsBufferIdx3;
+    GLuint mCoeffsBufferIdx4;
 
     vector<float> positions;
     vector<float> normals;
     vector<short> indices;
     vector<float> coeffs;
+    vector<float> coeffs2;
+    vector<float> coeffs3;
+    vector<float> coeffs4;
     vector<float> lights;
+
+    float scaleFactor;
 
 public:
 

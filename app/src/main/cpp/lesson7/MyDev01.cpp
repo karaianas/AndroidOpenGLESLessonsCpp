@@ -11,7 +11,9 @@ MyDev01::MyDev01()
     mModelMatrix = nullptr;
     mProjectionMatrix = nullptr;
 
-    obj = new Obj();
+    obj = new Obj(0.1f);
+    obj2 = new Obj(2.0f);
+    obj3 = new Obj(2.0f);
     skybox = new Skybox();
     skybox2 = new Skybox();
     skybox3 = new Skybox();
@@ -20,25 +22,36 @@ MyDev01::MyDev01()
     envmap3 = new EnvMap();
 
     // Object specification
-//    string path = "/planeNsphere.";
     //string path = "/plant.";
     string path = "/maxPlanck.";
     string modelPath = "models" + path + "model";
     string coeffPath = "coefficients" + path + "coeff";
     obj->parser(modelPath.c_str(), coeffPath.c_str());
 
+    string path2 = "/planeNsphere.";
+    string modelPath2 = "models" + path2 + "model";
+    string coeffPath2 = "coefficients" + path2 + "coeff";
+    obj2->parser(modelPath2.c_str(), coeffPath2.c_str());
+
+    string path3 = "/planeNsphere.";
+    string modelPath3 = "models" + path3 + "model";
+    string coeffPath3 = "coefficients" + path3 + "coeff";
+    obj3->parser(modelPath3.c_str(), coeffPath3.c_str());
+
+    currentObj = obj;
+
     // Environment map specification
     string envPath = "texture/test/equirectangular_8040_2.png";
     envmap->renderToTexture(80, 40, envPath.c_str());
-    envmap->obj = obj;
+    envmap->obj = currentObj;
 
-    string envPath2 = "texture/sunset/equirectangular_6432_2.png";
+    string envPath2 = "texture/sunset/equirectangular_6432_3.png";
     envmap2->renderToTexture(64, 32, envPath2.c_str());
-    envmap2->obj = obj;
+    envmap2->obj = currentObj;
 
-    string envPath3 = "texture/mountain/equirectangular_6432_2.png";
+    string envPath3 = "texture/mountain/equirectangular_6432_3.png";
     envmap3->renderToTexture(64, 32, envPath3.c_str());
-    envmap3->obj = obj;
+    envmap3->obj = currentObj;
 
     int order = 4;
 
@@ -84,7 +97,7 @@ void MyDev01::create()
 
     // Position the eye in front of the origin.
     float eyeX = 0.0f;
-    float eyeY = -2.0f;
+    float eyeY = 0.0f;
     float eyeZ = 10.0f;
 
     // We are looking at the origin
@@ -115,6 +128,20 @@ void MyDev01::create()
         return;
     }
 
+    mProgramHandle2 = GLUtils::createProgram(&vertex, &fragment);
+    if (!mProgramHandle2)
+    {
+        LOGD("Could not create program");
+        return;
+    }
+
+    mProgramHandle3 = GLUtils::createProgram(&vertex, &fragment);
+    if (!mProgramHandle3)
+    {
+        LOGD("Could not create program");
+        return;
+    }
+
     mSkyProgramHandle = GLUtils::createProgram(&vertex2, &fragment2);
     if (!mSkyProgramHandle)
     {
@@ -139,6 +166,9 @@ void MyDev01::create()
     //LOGD("%d %d", mProgramHandle, mSkyProgramHandle);
 
     obj->initialize(mProgramHandle);
+    obj2->initialize(mProgramHandle2);
+    obj2->mModelMatrix.translate(0.0f, -2.0f, 0.0f);
+    obj3->initialize(mProgramHandle3);
     skybox->initialize(mSkyProgramHandle);
     skybox2->initialize(mSkyProgramHandle2);
     skybox3->initialize(mSkyProgramHandle3);
@@ -215,6 +245,10 @@ void MyDev01::draw()
 
     obj->mViewMatrix = *mViewMatrix;
     obj->mProjectionMatrix = *mProjectionMatrix;
+    obj2->mViewMatrix = *mViewMatrix;
+    obj2->mProjectionMatrix = *mProjectionMatrix;
+    obj3->mViewMatrix = *mViewMatrix;
+    obj3->mProjectionMatrix = *mProjectionMatrix;
     skybox->mViewMatrix = *mViewMatrix;
     skybox->mProjectionMatrix = *mProjectionMatrix;
     skybox2->mViewMatrix = *mViewMatrix;
@@ -226,7 +260,7 @@ void MyDev01::draw()
 //    obj->mViewMatrix.multiply(*mViewMatrix, *mAccumulatedRotationMatrix);
 
     currentSkybox->renderer();
-    obj->renderer();
+    currentObj->renderer();
 
 }
 
@@ -252,7 +286,30 @@ void MyDev01::setSkybox(int val)
         currentSkybox = skybox3;
         currentEnv = envmap3;
     }
+    currentEnv->obj = currentObj;
+    currentEnv->setLightCoeff(4);
+    draw();
+}
 
+void MyDev01::setObj(int val)
+{
+    if(val == 0)
+    {
+        currentObj = obj;
+        currentEnv->obj = obj;
+
+    }
+    else if(val == 1)
+    {
+        currentObj = obj2;
+        currentEnv->obj = obj2;
+    }
+    else
+    {
+        currentObj = obj3;
+        currentEnv->obj = obj3;
+    }
+    currentEnv->setLightCoeff(4);
     draw();
 }
 
@@ -260,9 +317,10 @@ void MyDev01::reset()
 {
     mAccumulatedRotationMatrix->identity();
     inverseRotationMatrix->identity();
+    mModelMatrix->identity();
 
     float eyeX = 0.0f;
-    float eyeY = -2.0f;
+    float eyeY = 0.0f;
     float eyeZ = 10.0f;
 
     // We are looking at the origin

@@ -43,13 +43,14 @@
 
 	</LinearLayout>
 
-    <TextView
-        android:id="@+id/textViewFPS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:text="0.0 fps"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textColor="@android:color/white" />
+	<TextView
+		android:id="@+id/textViewFPS"
+		android:layout_width="149dp"
+		android:layout_height="35dp"
+		android:gravity="top"
+		android:text="0.0 fps"
+		android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+		android:textColor="@android:color/white" />
+
 
 </FrameLayout>

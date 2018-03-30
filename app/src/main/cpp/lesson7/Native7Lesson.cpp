@@ -31,9 +31,11 @@ Native7Lesson::Native7Lesson() {
 
     mydev01 = new MyDev01();
     previousTime = 0.0f;
+    counter = 0;
 
     isSkyboxRotation = true;
     skyboxMode = 0;
+    objMode = 0;
 }
 
 Native7Lesson::~Native7Lesson() {
@@ -60,7 +62,12 @@ void Native7Lesson::draw()
     mydev01->draw();
     float elapsed = clock() - start;
     float fps = CLOCKS_PER_SEC/elapsed;
-    updateFPS(fps);
+    counter++;
+    if(counter == 10)
+    {
+        updateFPS(fps);
+        counter = 0;
+    }
 //    if(abs(fps - previousTime) > 10.0f)
 //    {
 //        updateFPS(fps);
@@ -74,7 +81,8 @@ void Native7Lesson::decreaseCubeCount() {
 //    if (genData != nullptr && genData->mLastRequestedCubeFactor > 1) {
 //        genData->genCube(--genData->mLastRequestedCubeFactor, false, false);
 //    }
-
+    objMode = (objMode + 1) % 3;
+    mydev01->setObj(objMode);
 }
 
 void Native7Lesson::increaseCubeCount() {

@@ -43,6 +43,7 @@ public:
     void setRotationMode(bool val);
 
     void setSkybox(int val);
+    void setObj(int val);
 
     void reset();
 
@@ -50,7 +51,10 @@ public:
 
     bool isSky;
 
+    Obj* currentObj;
     Obj* obj;
+    Obj* obj2;
+    Obj* obj3;
     Skybox* currentSkybox;
     Skybox* skybox;
     Skybox* skybox2;
@@ -72,6 +76,8 @@ public:
     Matrix *inverseRotationMatrix;
 
     GLuint mProgramHandle;
+    GLuint mProgramHandle2;
+    GLuint mProgramHandle3;
     GLuint mSkyProgramHandle;
     GLuint mSkyProgramHandle2;
     GLuint mSkyProgramHandle3;

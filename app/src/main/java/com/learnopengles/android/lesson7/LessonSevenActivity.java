@@ -16,6 +16,8 @@ import com.learnopengles.android.cpp.R;
 
 // ++++++++++++++++++++++++++++++++++++
 import android.widget.TextView;
+import com.google.vr.sdk.base.GvrActivity;
+import com.google.vr.sdk.base.GvrView;
 import android.os.SystemClock;
 // ++++++++++++++++++++++++++++++++++++
 
@@ -32,6 +34,7 @@ public class LessonSevenActivity extends Activity {
 
         setContentView(R.layout.lesson_seven);
 
+        //GvrView gvrView = (GvrView) findViewById(R.id.gvr_view);
         mGlSurfaceView = (LessonSevenGLSurfaceView) findViewById(R.id.gl_surface_view);
 
         // Check if the system support OpenGL ES 2.0
@@ -173,7 +176,7 @@ public class LessonSevenActivity extends Activity {
             public void run() {
 
 
-                ((TextView) findViewById(R.id.textViewFPS)).setText(String.format("%3.2f FPS", fps));
+                ((TextView) findViewById(R.id.textViewFPS)).setText(String.format("    %3.2f fps", fps));
 
             }
         });
