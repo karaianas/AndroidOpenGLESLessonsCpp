@@ -23,6 +23,12 @@ void EnvMap::setLightCoeff(int order)
 {
     int num = order * order;
 
+
+//    float tmax = 0.0f;
+//    float tmin = 10.0f;
+//    float pmax = 0.0f;
+//    float pmin = 10.0f;
+
     delete colors;
     colors = new vector<vector<float>>();
 
@@ -44,6 +50,16 @@ void EnvMap::setLightCoeff(int order)
             theta = float(i)/float(height) * PI;
             phi = float(j)/float(width) * 2 * PI;
 
+//            if(theta > tmax)
+//                tmax = theta;
+//            else if(theta < tmin)
+//                tmin = theta;
+//
+//            if(phi > pmax)
+//                pmax = phi;
+//            else if(phi < pmin)
+//                pmin = phi;
+
             x = sin(theta)*cos(phi);
             y = sin(theta)*sin(phi);
             z = cos(theta);
@@ -63,6 +79,8 @@ void EnvMap::setLightCoeff(int order)
         obj->lights.push_back(colors->at(i)[1]);
         obj->lights.push_back(colors->at(i)[2]);
     }
+
+//    LOGD("%f %f %f %f", tmin, tmax, pmin, pmax);
 }
 
 void EnvMap::updateLightCoeff(Matrix& R)

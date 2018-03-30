@@ -47,12 +47,12 @@
    	<string name="lesson_seven_using_stride">Using stride</string>
    	<string name="lesson_seven_not_using_stride">Not using stride</string>
    	-->
-    <string name="lesson_seven_increase_cube_count">Change Skybox</string>
-    <string name="lesson_seven_decrease_cube_count">Change Object</string>
-    <string name="lesson_seven_using_VBOs">Skybox Rotation</string>
-    <string name="lesson_seven_not_using_VBOs">Object Rotation</string>
-    <string name="lesson_seven_using_stride">Using stride</string>
-    <string name="lesson_seven_not_using_stride">Not using stride</string>
+    <string name="lesson_seven_increase_cube_count">Change skybox</string>
+    <string name="lesson_seven_decrease_cube_count">Change object</string>
+    <string name="lesson_seven_using_VBOs">Start Rotation</string>
+    <string name="lesson_seven_not_using_VBOs">Stop Rotation</string>
+    <string name="lesson_seven_using_stride">Reset</string>
+    <string name="lesson_seven_not_using_stride">Reset</string>
 
    	<string name="lesson_eight">Lesson Eight: An Intro to IBOs</string>  
     <string name="lesson_eight_subtitle">This lesson looks at index buffer objects (IBOs).</string>

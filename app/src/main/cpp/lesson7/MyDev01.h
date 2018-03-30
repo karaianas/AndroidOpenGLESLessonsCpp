@@ -32,23 +32,19 @@
 class MyDev01{
 
 public:
-    float time;
-    clock_t currentTime;
-    clock_t deltaTime;
 
     MyDev01();
     ~MyDev01();
-
-    void updateFPS(float fps);
 
     void create();
     void change(int width, int height);
     void draw();
 
     void setRotationMode(bool val);
-    void rotation();
 
-    void setSkybox(bool val);
+    void setSkybox(int val);
+
+    void reset();
 
     void setDelta(float x, float y);
 
@@ -58,9 +54,11 @@ public:
     Skybox* currentSkybox;
     Skybox* skybox;
     Skybox* skybox2;
+    Skybox* skybox3;
     EnvMap* currentEnv;
     EnvMap* envmap;
     EnvMap* envmap2;
+    EnvMap* envmap3;
 
     // model/view/projection matrix
     Matrix *mModelMatrix;
@@ -69,12 +67,14 @@ public:
 
     //
     Matrix *mAccumulatedRotationMatrix;
+    Matrix *mAccumulatedRotationMatrix2;
     Matrix *mCurrentRotationMatrix;
     Matrix *inverseRotationMatrix;
 
     GLuint mProgramHandle;
     GLuint mSkyProgramHandle;
     GLuint mSkyProgramHandle2;
+    GLuint mSkyProgramHandle3;
 
     float mDeltaX;
     float mDeltaY;

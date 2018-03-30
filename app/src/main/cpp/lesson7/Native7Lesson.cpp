@@ -33,7 +33,7 @@ Native7Lesson::Native7Lesson() {
     previousTime = 0.0f;
 
     isSkyboxRotation = true;
-    skyboxMode = true;
+    skyboxMode = 0;
 }
 
 Native7Lesson::~Native7Lesson() {
@@ -81,7 +81,7 @@ void Native7Lesson::increaseCubeCount() {
 //    if (genData != nullptr && genData->mLastRequestedCubeFactor < 16) {
 //        genData->genCube(++genData->mLastRequestedCubeFactor, false, false);
 //    }
-    skyboxMode = !skyboxMode;
+    skyboxMode = (skyboxMode + 1) % 3;
     mydev01->setSkybox(skyboxMode);
 }
 
@@ -95,6 +95,7 @@ void Native7Lesson::setDelta(float x, float y) {
 
 void Native7Lesson::toggleStride() {
 //    genData->genCube(genData->mLastRequestedCubeFactor, false, true);
+    mydev01->reset();
 }
 
 // Rotation toggle
