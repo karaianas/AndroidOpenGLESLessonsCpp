@@ -264,6 +264,8 @@ void Obj::parser(const char* objPath, const char* coeffPath)
         if(numbers.size() == 6)
         {
             //float len = sqrt(numbers[0]*numbers[0] + numbers[1]*numbers[1] + numbers[2]*numbers[2]);
+            if(vcounter == 29948)
+                LOGD("%f %f %f %f %f %f", numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5]);
             positions.push_back(numbers[0] * scaleFactor);// / len);
             positions.push_back(numbers[1] * scaleFactor);// / len);
             positions.push_back(numbers[2] * scaleFactor);// / len);
@@ -272,6 +274,8 @@ void Obj::parser(const char* objPath, const char* coeffPath)
             normals.push_back(numbers[4]);
             normals.push_back(numbers[5]);
             vcounter++;
+
+
         }
         else
         {

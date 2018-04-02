@@ -13,7 +13,7 @@ MyDev01::MyDev01()
 
     obj = new Obj(0.1f);
     obj2 = new Obj(2.0f);
-    obj3 = new Obj(2.0f);
+    obj3 = new Obj(0.1f);
     skybox = new Skybox();
     skybox2 = new Skybox();
     skybox3 = new Skybox();
@@ -33,10 +33,10 @@ MyDev01::MyDev01()
     string coeffPath2 = "coefficients" + path2 + "coeff";
     obj2->parser(modelPath2.c_str(), coeffPath2.c_str());
 
-    string path3 = "/planeNsphere.";
+    string path3 = "/pharaoh.";
     string modelPath3 = "models" + path3 + "model";
     string coeffPath3 = "coefficients" + path3 + "coeff";
-    obj3->parser(modelPath3.c_str(), coeffPath3.c_str());
+//    obj3->parser(modelPath3.c_str(), coeffPath3.c_str());
 
     currentObj = obj;
 
@@ -299,16 +299,17 @@ void MyDev01::setObj(int val)
         currentEnv->obj = obj;
 
     }
-    else if(val == 1)
+    else//(val == 1)
     {
         currentObj = obj2;
         currentEnv->obj = obj2;
     }
-    else
-    {
-        currentObj = obj3;
-        currentEnv->obj = obj3;
-    }
+//    else
+//    {
+//        currentObj = obj3;
+//        currentEnv->obj = obj3;
+//        //LOGD("%d", obj3->normals.size());
+//    }
     currentEnv->setLightCoeff(4);
     draw();
 }

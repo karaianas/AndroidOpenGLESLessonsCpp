@@ -81,7 +81,7 @@ void Native7Lesson::decreaseCubeCount() {
 //    if (genData != nullptr && genData->mLastRequestedCubeFactor > 1) {
 //        genData->genCube(--genData->mLastRequestedCubeFactor, false, false);
 //    }
-    objMode = (objMode + 1) % 3;
+    objMode = (objMode + 1) % 2;
     mydev01->setObj(objMode);
 }
 
